@@ -1,0 +1,178 @@
+<style>
+  .containerAdmin { display: flex; flex-direction: column; align-items: center;
+  } .usersAdmin, .productsAdmin { display: flex; flex-wrap: wrap;
+  justify-content: center; } .card { margin: 10px; width: 400px; /* Ancho
+  ajustable según tu preferencia */ } .footer { text-align: center; margin-top:
+  20px; } /* Estilos para el título */ .title-container { background-color:
+  #f0f0f0; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align:
+  center; width: 80%; } .title-container h1 { margin: 0; font-size: 24px; color:
+  #333; } /* Estilos para los botones dentro de la tarjeta */ .card-footer {
+  display: flex; flex-direction: column; align-items: stretch; /* Hace que los
+  elementos se expandan horizontalmente */ } .card-footer button, .card-footer a
+  { width: 100%; margin-top: 5px; }
+</style>
+<br />
+<div class="containerAdmin">
+
+  <div class="title-container">
+    <a href="https://ibb.co/QbxPvRR">
+      <img
+        src="https://i.ibb.co/X2G7xgg/Logo-Veterinaria-Tienda-Mascotas-Simple-Beige-1-colores.png"
+        alt="Logo-Veterinaria-Tienda-Mascotas-Simple-Beige-1-colores"
+        class="logo"
+        border="0"
+      />
+    </a>
+    <h1>
+      Tu número de tag es
+      {{user.tag}}.
+      <br />
+      Por favor actualizá tu correo electrónico privado, se te solicitará en
+      caso de que necesites recordar tu contraseña.
+    </h1>
+  </div>
+
+  <h3>Mi mascota:</h3>
+  <!-- Button trigger modal -->
+
+  <!-- Modal -->
+  <div
+    class="modal fade"
+    id="exampleModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+  >
+    <!-- Modal content here -->
+  </div>
+  <div class="productsAdmin">
+    {{#each allProducts}}
+      <div class="card">
+        <div class="card-body">
+          <form
+            class="form"
+            role="form"
+            autocomplete="off"
+            id="formProductAdmin"
+          >
+            <input
+              class="form-control"
+              type="hidden"
+              name="productId"
+              value="{{_id}}"
+            />
+            <label for="tag">Tag:</label>
+            <input
+              class="form-control"
+              type="text"
+              name="tag"
+              value="{{tag}}"
+              readonly
+            />
+            <label for="tag">Email privado (no se mostrará en la página
+              pública):</label>
+            <input
+              id="newEmailP-{{_id}}"
+              class="form-control"
+              type="text"
+              name="emailP"
+              value="{{emailP}}"
+            />
+            <label for="tag">Email:</label>
+            <input
+              id="newEmail-{{_id}}"
+              class="form-control"
+              type="text"
+              name="email"
+              value="{{email}}"
+            />
+            <label for="title">Nombre de la mascota:</label>
+            <input
+              id="newTitle-{{_id}}"
+              class="form-control"
+              type="text"
+              name="title"
+              value="{{title}}"
+            />
+            <label for="thumbnail">Url de la foto:</label>
+            <input
+              id="newThumbnail-{{_id}}"
+              class="form-control"
+              type="text"
+              name="thumbnail"
+              value="{{thumbnail}}"
+            />
+            <label for="description">Descripción:</label>
+            <input
+              id="newDescription-{{_id}}"
+              class="form-control"
+              type="text"
+              name="description"
+              value="{{description}}"
+            />
+            <label for="fechadenacimiento">Fecha de nacimiento:</label>
+            <input
+              id="newFechadenacimiento-{{_id}}"
+              class="form-control"
+              type="text"
+              name="fechadenacimiento"
+              value="{{fechadenacimiento}}"
+            />
+            <label for="medicamentos">Medicamentos:</label>
+            <input
+              id="newMedicamentos-{{_id}}"
+              class="form-control"
+              type="text"
+              name="medicamentos"
+              value="{{medicamentos}}"
+            />
+            <label for="enfermedades">Historia clínica:</label>
+            <input
+              id="newEnfermedades-{{_id}}"
+              class="form-control"
+              type="text"
+              name="enfermedades"
+              value="{{enfermedades}}"
+            />
+            <label for="nombredelhumano">Nombre de mi humano:</label>
+            <input
+              id="newNombredelhumano-{{_id}}"
+              class="form-control"
+              type="text"
+              name="nombredelhumano"
+              value="{{nombredelhumano}}"
+            />
+            <label for="telefono">Teléfono:</label>
+            <input
+              id="newTelefono-{{_id}}"
+              class="form-control"
+              type="text"
+              name="telefono"
+              value="{{telefono}}"
+            />
+          </form>
+        </div>
+        <div class="card-footer">
+          <button
+            type="button"
+            class="btn btn-outline-success"
+            onclick="updateProduct('{{_id}}')"
+          >Actualizar</button>
+          <a href="api/products/{{this._id}}" class="btn btn-primary">Ver página
+            pública</a>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+<div class="footer">
+
+  Desarrollado por
+  <a href="https://lauroware.github.io/portfolio/" target="_blank">Lauro Ware</a>
+  <br />
+  Sitio de nuestra empresa:
+  <a href="www.totinas.com.ar"> Totinas</a>
+</div>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/adminView.js"></script>

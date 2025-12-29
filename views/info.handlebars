@@ -1,0 +1,172 @@
+ <style>
+      /* Estilos CSS */ body { font-family: Arial, sans-serif; background-image:
+      url('https://p4.wallpaperbetter.com/wallpaper/561/441/224/minimalistic-dark-grey-textures-gradient-2000x1200-abstract-textures-hd-art-wallpaper-preview.jpg');
+      background-size: cover; background-repeat: no-repeat; background-position:
+      center; color: #333; display: flex; /* Utilizar flexbox para centrar el
+      contenido verticalmente */ justify-content: center; /* Centrar
+      horizontalmente */ align-items: center; /* Centrar verticalmente */
+      min-height: 100vh; /* Ajustar el tamaño mínimo del cuerpo para ocupar toda
+      la pantalla */ } .containerAuth { max-width: 400px; padding: 20px;
+      background-color: rgba(255, 255, 255, 0.8); border: 1px solid #ddd;
+      border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      text-align: center; /* Añadido para centrar el contenido */ } h1 {
+      text-align: center; color: #333; } .form-group { margin-bottom: 20px; }
+      .form-control { width: 100%; padding: 10px; border: 1px solid #ddd;
+      border-radius: 5px; } .btn { width: 100%; padding: 10px; border: none;
+      border-radius: 5px; cursor: pointer; font-weight: bold; } .btn-success {
+      background-color: #000000; color: #fff; } .btn-success:hover {
+      background-color: #000000; } .text-left { text-align: left; } /* Estilos
+      para el logo */ .logo { max-width: 100%; /* Ajustar el tamaño máximo del
+      logo */ height: auto; /* Mantener la proporción de la imagen */ }
+    </style>
+<section class="container py-5">
+  {{!-- Encabezado --}}
+  <div class="text-center mb-5">
+    <h1 class="fw-bold">Cómo funciona tu Tag con QR</h1>
+    <p class="text-muted mb-0">
+      Un QR grabado en tu chapita/llavero abre una página pública con la info que vos decidas compartir.
+    </p>
+  </div>
+
+  {{!-- Lista de pasos (estilo “working principle”) --}}
+  <div class="row g-4">
+
+    {{!-- Paso 1 --}}
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <div class="row align-items-center g-4">
+            <div class="col-12 col-md-4 text-center">
+              {{!-- Reemplazá por tu imagen si querés --}}
+              <img
+                src="/img/info/step-1.png"
+                alt="Un tag corresponde a un objeto o mascota"
+                class="img-fluid rounded"
+                onerror="this.style.display='none'"
+              />
+              <div class="mt-2 text-muted small">Paso 1</div>
+            </div>
+
+            <div class="col-12 col-md-8">
+              <h3 class="h5 fw-bold mb-2">1) Un Tag = un objeto, mascota o persona</h3>
+              <p class="text-muted mb-0">
+                Contamos con tres perfiles de Tags. Cada uno está asociado a un perfil. Podés colgarlo en una valija, collar, llavero o placa.
+                Lo importante: el QR siempre apunta a una URL estable.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Paso 2 --}}
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <div class="row align-items-center g-4">
+            <div class="col-12 col-md-4 text-center">
+              <img
+                src="/img/info/step-2.png"
+                alt="Escaneá y cargá tu información"
+                class="img-fluid rounded"
+                onerror="this.style.display='none'"
+              />
+              <div class="mt-2 text-muted small">Paso 2</div>
+            </div>
+
+            <div class="col-12 col-md-8">
+              <h3 class="h5 fw-bold mb-2">2) Cuando inicias sesión por primera vez cargás tus datos</h3>
+              <p class="text-muted mb-0">
+                Escaneá el QR con la cámara del celular y completá el perfil: nombre, foto, contacto y datos útiles
+                (por ejemplo, alergias/medicación si es mascota).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Paso 3 --}}
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <div class="row align-items-center g-4">
+            <div class="col-12 col-md-4 text-center">
+              <img
+                src="/img/info/step-3.png"
+                alt="Se abre una página pública"
+                class="img-fluid rounded"
+                onerror="this.style.display='none'"
+              />
+              <div class="mt-2 text-muted small">Paso 3</div>
+            </div>
+
+            <div class="col-12 col-md-8">
+              <h3 class="h5 fw-bold mb-2">3) Cuando cargas todos los datos, podes verificar la página pública del Tag</h3>
+              <p class="text-muted mb-0">
+                Cuando alguien escanea el QR, se abre una página pública con la información del Tag.
+                La persona que encontró tu objeto/mascota puede contactarte al toque. Importante solo compartis la información que realmente quieras hacer pública.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Paso 4 --}}
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <div class="row align-items-center g-4">
+            <div class="col-12 col-md-4 text-center">
+              <img
+                src="/img/info/step-4.png"
+                alt="Privacidad controlada"
+                class="img-fluid rounded"
+                onerror="this.style.display='none'"
+              />
+              <div class="mt-2 text-muted small">Paso 4</div>
+            </div>
+
+            <div class="col-12 col-md-8">
+              <h3 class="h5 fw-bold mb-2">4) Privacidad</h3>
+              <p class="text-muted mb-0">
+                Vos decidís qué se muestra en la página pública (La idea es ayudar a que te devuelvan el objeto sin exponer de más).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Paso 5 --}}
+    <div class="col-12">
+      
+      <div class="card shadow-sm border-0">
+        
+        <div class="card-body p-4">
+          <div class="row align-items-center g-4">
+      
+
+ <div class="text-center mt-5">
+    <h2 class="h4 fw-bold mb-2">¿Listo para empezar?</h2>
+    <p class="text-muted mb-3">Iniciá sesión con tu número de tag y la contraseña brindada por nosotros y empezá a utilizar tu producto!.</p>
+    <a href="/auth/login" class="btn btn-dark px-4">Entrar</a>
+  </div>
+
+
+
+
+
+          
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  {{!-- CTA final --}}
+ 
+</section>

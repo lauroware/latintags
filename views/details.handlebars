@@ -1,0 +1,146 @@
+<html lang="es">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Información del tag</title>
+    <!-- Agrega la hoja de estilo de Bootstrap y tu propio CSS personalizado -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body { background-size: cover; /* Ajusta la imagen para cubrir todo el
+      fondo */ background-position: center; /* Centra la imagen en el fondo */
+      background-repeat: no-repeat; /* Evita la repetición de la imagen */
+      {{#if isPetFromProducts}}
+        background-image:
+        url('https://media.istockphoto.com/id/1417882544/es/foto/gran-grupo-de-gatos-y-perros-mirando-a-la-c%C3%A1mara-sobre-fondo-azul.jpg?s=612x612&w=0&k=20&c=24s5hhdBTwmBC5wS5fXqdlAJHGBYGoTmO0iY6IQFwWM=');
+
+      {{else if isPersonFromProducts}}
+        background-image:
+        url('https://img.freepik.com/free-vector/geometric-background_53876-115958.jpg');
+
+      {{else}}
+        background-image:
+        url('https://p4.wallpaperbetter.com/wallpaper/561/441/224/minimalistic-dark-grey-textures-gradient-2000x1200-abstract-textures-hd-art-wallpaper-preview.jpg');
+      {{/if}}
+      } .containerDetails { min-height: 100vh; /* Establece la altura mínima del
+      contenedor como el 100% del viewport height */ display: flex;
+      flex-direction: column; justify-content: center; align-items: center; }
+      .card { width: 80%; /* Ancho de la tarjeta */ text-align: center; /*
+      Centra el contenido de la tarjeta */ } .card-gray { background-color:
+      #dde0e0; /* Color de fondo gris */ padding: 15px; /* Añade un espacio
+      interno para mejorar la apariencia */ margin-bottom: 20px; /* Espaciado
+      inferior */ display: inline-block; /* Alinea la tarjeta gris como un
+      bloque en línea */ } .card-gray h6 { margin-bottom: 0; /* Elimina el
+      margen inferior del subtítulo */ } /* Estilos para el footer */ .footer {
+      text-align: center; margin-top: 20px; background-color: white;} .logo
+      {width: 200px; height: auto;} .card img { max-width: 100%; /* La imagen se
+      ajustará al ancho de la tarjeta */ height: auto; /* La altura se ajustará
+      automáticamente según el ancho */ }
+    </style>
+  </head>
+
+  <body>
+    <!-- Contenedor principal -->
+    <div class="containerDetails container">
+      <!-- Imagen del logo -->
+
+      <!-- Card de Bootstrap para mostrar los datos de la mascota -->
+      {{#if isPetFromProducts}}
+
+        <div class="card">
+          <div class="card-body">
+            <img src="{{product.description}}" alt="" />
+            <h1 class="card-title">Hola, soy {{product.title}}</h1>
+            <h6 class="card-subtitle mb-2 text-muted">Descripción:
+              {{product.fechadenacimiento}}</h6>
+            <p class="card-text">Año de nacimiento: {{product.medicamentos}}</p>
+            <p class="card-text">Medicamentos: {{product.enfermedades}}</p>
+            <p class="card-text">Historia clínica:
+              {{product.nombredelhumano}}</p>
+            <p class="card-text">Nombre de mi humano: {{product.telefono}}</p>
+            <p class="card-text">Teléfono:
+              <a
+                href="https://wa.me/+54{{thumbnail}}"
+                target="_blank"
+              >{{product.thumbnail}}</a></p>
+            <p class="card-text">Correo electrónico: {{product.email}}</p>
+
+            <p class="card-text">Si me encontraste, por favor teneme paciencia,
+              voy a estar muy asustado.</p>
+            <img
+              src="https://i.ibb.co/X2G7xgg/Logo-Veterinaria-Tienda-Mascotas-Simple-Beige-1-colores.png"
+              alt="Logo-Veterinaria-Tienda-Mascotas-Simple-Beige-1-colores"
+              class="logo"
+            />
+          </div>
+        </div>
+      {{else if isPersonFromProducts}}
+        <!-- Segundo condicional -->
+
+        <div class="card">
+          <div class="card-body">
+            <img src="{{product.description}}" alt="" />
+            <h1 class="card-title">Hola, soy {{product.title}}</h1>
+            <h6 class="card-subtitle mb-2 text-muted">Sobre mi:
+              {{product.fechadenacimiento}}</h6>
+            <p class="card-text">Fecha de nacimiento:
+              {{product.medicamentos}}</p>
+            <p class="card-text">Medicamentos: {{product.enfermedades}}</p>
+            <p class="card-text">Historia clínica:
+              {{product.nombredelhumano}}</p>
+            <p class="card-text">Contacto de referencia:
+              {{product.telefono}}</p>
+            <p class="card-text">Teléfono:
+              <a
+                href="https://wa.me/+54{{thumbnail}}"
+                target="_blank"
+              >{{product.thumbnail}}</a></p>
+            <p class="card-text">Dirección: {{product.email}}</p>
+          </div>
+        </div>
+
+      {{else}}
+        <div class="card">
+          <div class="card-body">
+            <div class="card-gray">
+              <h1
+                class="card-subtitle mb-2 text-muted"
+              >{{product.fechadenacimiento}}</h1>
+            </div>
+            <p class="card-text">Nombre de Contacto: {{product.telefono}}</p>
+            <p class="card-text">Teléfono:
+              <a
+                href="https://wa.me/+54{{product.thumbnail}}"
+                target="_blank"
+              >{{product.thumbnail}}</a></p>
+            <p class="card-text">Correo electrónico: {{product.email}}</p>
+
+          </div>
+
+        </div>
+      {{/if}}
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+
+      Desarrollado por
+      <a href="https://lauroware.github.io/portfolio/" target="_blank">Lauro
+        Ware</a>
+      <br />
+      Sitio de nuestra empresa:
+      <a href="www.totinas.com.ar"> Totinas</a>
+    </div>
+
+    <!-- Agrega la librería de Bootstrap y jQuery (necesaria para Bootstrap) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    <script src="/js/cart.js"></script>
+  </body>
+
+</html>
