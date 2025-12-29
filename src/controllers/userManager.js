@@ -98,19 +98,36 @@ const updateUserRole = async (req, res) => {
 
 const updateUserEmail = async (req, res) => {
   const { uid, newEmail } = req.body;
+
   try {
     const updatedUser = await serviceUpdateUserEmail(uid, newEmail);
-    res.status(200).send({
+
+    // ✅ refrescar sesión si el usuario actualizado es el mismo que está logueado
+    const sessionUser = req.session?.user;
+    if (
+      sessionUser &&
+      (String(sessionUser._id) === String(updatedUser?._id) ||
+        String(sessionUser.tag) === String(updatedUser?.tag))
+    ) {
+      req.session.user = updatedUser;
+      await new Promise((resolve, reject) =>
+        req.session.save((err) => (err ? reject(err) : resolve()))
+      );
+    }
+
+    return res.status(200).send({
       status: "success",
       payload: "User email updated",
       user: updatedUser,
     });
   } catch (error) {
-    res
+    return res
       .status(500)
-      .send({ status: "error", payload: "Error updating user role" });
+      .send({ status: "error", payload: "Error updating user email" });
   }
 };
+
+
 
 const renderRestorePassword = async (req, res) => {
   res.render("restore-password", { style: "index.css" });

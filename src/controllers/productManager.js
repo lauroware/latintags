@@ -157,7 +157,7 @@ const updateProductEmail = async (req, res) => {
       return res.status(401).send({ message: "Unauthorized" });
     }
 
-    const isAdmin = user.role === "admin";
+    const isAdmin = user.role === "admin" || user.role === "admin1" || user.role === "admin2";
     const isPremium = user.role === "premium";
     const isOwner = String(user.tag) === String(product.tag);
 
@@ -176,11 +176,15 @@ const updateProductEmail = async (req, res) => {
       { new: true }
     );
 
-    // 4) ✅ Sincronizar User (para que restore password funcione)
+    // 4) Sincronizar User
     await userModel.updateOne(
       { tag: updatedProduct.tag },
       { $set: { email: newEmail, emailP: newEmail } }
     );
+
+    // 5) ✅ Refrescar sesión (CLAVE para que no se caiga)
+    const refreshedUser = await userModel.findOne({ tag: updatedProduct.tag }).lean();
+    req.session.user = refreshedUser;
 
     return res.status(200).send(updatedProduct);
   } catch (error) {
@@ -188,6 +192,7 @@ const updateProductEmail = async (req, res) => {
     return res.status(500).send({ message: "Error updating product email" });
   }
 };
+
 
 
 const getAdminView = async (req, res) => {
