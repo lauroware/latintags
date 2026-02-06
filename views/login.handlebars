@@ -1,87 +1,333 @@
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Iniciar sesión</title>
+    <title>Iniciar sesión | Tags</title>
+
+    <!-- Fuente (opcional, queda más "pro") -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-      /* Estilos CSS */ body { font-family: Arial, sans-serif; background-image:
-      url('https://p4.wallpaperbetter.com/wallpaper/561/441/224/minimalistic-dark-grey-textures-gradient-2000x1200-abstract-textures-hd-art-wallpaper-preview.jpg');
-      background-size: cover; background-repeat: no-repeat; background-position:
-      center; color: #333; display: flex; /* Utilizar flexbox para centrar el
-      contenido verticalmente */ justify-content: center; /* Centrar
-      horizontalmente */ align-items: center; /* Centrar verticalmente */
-      min-height: 100vh; /* Ajustar el tamaño mínimo del cuerpo para ocupar toda
-      la pantalla */ } .containerAuth { max-width: 400px; padding: 20px;
-      background-color: rgba(255, 255, 255, 0.8); border: 1px solid #ddd;
-      border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-      text-align: center; /* Añadido para centrar el contenido */ } h1 {
-      text-align: center; color: #333; } .form-group { margin-bottom: 20px; }
-      .form-control { width: 100%; padding: 10px; border: 1px solid #ddd;
-      border-radius: 5px; } .btn { width: 100%; padding: 10px; border: none;
-      border-radius: 5px; cursor: pointer; font-weight: bold; } .btn-success {
-      background-color: #000000; color: #fff; } .btn-success:hover {
-      background-color: #000000; } .text-left { text-align: left; } /* Estilos
-      para el logo */ .logo { max-width: 100%; /* Ajustar el tamaño máximo del
-      logo */ height: auto; /* Mantener la proporción de la imagen */ }
+      :root {
+        --bg: #0b0f14;
+        --panel: rgba(255, 255, 255, 0.08);
+        --panelBorder: rgba(255, 255, 255, 0.14);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.65);
+        --accent: #00a7c4; /* Nexo vibes */
+        --accent2: #08b3d5;
+        --danger: #ff4d4d;
+        --shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+        --radius: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px;
+        background: radial-gradient(
+            900px 600px at 20% 10%,
+            rgba(0, 167, 196, 0.22),
+            transparent 60%
+          ),
+          radial-gradient(
+            700px 500px at 90% 70%,
+            rgba(8, 179, 213, 0.18),
+            transparent 55%
+          ),
+          linear-gradient(180deg, #0b0f14, #070a0f);
+      }
+
+      /* Grid suave tipo "tech" */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image: linear-gradient(
+            rgba(255, 255, 255, 0.06) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.06) 1px,
+            transparent 1px
+          );
+        background-size: 44px 44px;
+        opacity: 0.12;
+      }
+
+      .containerAuth {
+        width: 100%;
+        max-width: 420px;
+        padding: 22px 22px 18px;
+        background: var(--panel);
+        border: 1px solid var(--panelBorder);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Borde luminoso */
+      .containerAuth::after {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 167, 196, 0.35),
+          transparent 40%,
+          rgba(8, 179, 213, 0.25)
+        );
+        filter: blur(18px);
+        opacity: 0.55;
+        pointer-events: none;
+      }
+
+      .inner {
+        position: relative;
+        z-index: 1;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .logo {
+        width: 170px;
+        max-width: 70%;
+        height: auto;
+        display: block;
+        filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.35));
+      }
+
+      h1 {
+        margin: 6px 0 4px;
+        font-size: 20px;
+        text-align: center;
+        letter-spacing: 0.2px;
+      }
+
+      .subtitle {
+        margin: 0 0 18px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .form-group {
+        margin-bottom: 12px;
+      }
+
+      .label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0 0 6px;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 12px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.28);
+        color: var(--text);
+        outline: none;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease,
+          transform 0.05s ease;
+      }
+
+      .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.45);
+      }
+
+      .form-control:focus {
+        border-color: rgba(0, 167, 196, 0.8);
+        box-shadow: 0 0 0 4px rgba(0, 167, 196, 0.18);
+      }
+
+      .btn {
+        width: 100%;
+        padding: 12px 12px;
+        border: 0;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: #001018;
+        box-shadow: 0 12px 30px rgba(0, 167, 196, 0.22);
+        transition: transform 0.08s ease, filter 0.15s ease;
+      }
+      .btn-success:hover {
+        filter: brightness(1.03);
+      }
+      .btn-success:active {
+        transform: translateY(1px);
+      }
+
+      .links {
+        margin-top: 14px;
+        display: grid;
+        gap: 10px;
+        text-align: center;
+      }
+
+      .link {
+        color: rgba(255, 255, 255, 0.82);
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 13px;
+      }
+      .link:hover {
+        color: #ffffff;
+        text-decoration: underline;
+        text-decoration-color: rgba(0, 167, 196, 0.75);
+        text-underline-offset: 4px;
+      }
+
+      .footer {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .footer a {
+        color: rgba(255, 255, 255, 0.78);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        color: #fff;
+        text-decoration: underline;
+        text-decoration-color: rgba(0, 167, 196, 0.75);
+        text-underline-offset: 4px;
+      }
+     .brand-wide {
+  width: calc(100% + 44px);   /* compensa el padding del card */
+  margin: -22px -22px 18px;
+  display: flex;
+  justify-content: center;   /* 🔑 centra horizontalmente */
+}
+
+.brand-wide img {
+  width: 100%;
+  height: auto;
+  max-height: 80px;          /* ajustá si querés */
+  object-fit: contain;
+  display: block;
+}
+
+
+
+      /* Mensajito mini (tipo badge) */
+      .badge {
+        width: fit-content;
+        margin: 0 auto 14px;
+        font-size: 11px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(0, 167, 196, 0.12);
+        border: 1px solid rgba(0, 167, 196, 0.25);
+        color: rgba(255, 255, 255, 0.82);
+      }
     </style>
   </head>
+
   <body>
     <div class="containerAuth">
-      <a href="">
-        <img
-          src="https://i.postimg.cc/9M0rq7J1/logotags.png"
-          alt="Logo-Veterinaria-Tienda-Mascotas-Simple-Beige-1-colores"
-          class="logo"
-          border="0"
-        />
-      </a>
-      <h1>Iniciar sesión</h1>
-      <form class="form" role="form" autocomplete="off" id="formLogin">
-        <div class="form-group">
-          <input
-            id="tag"
-            name="tag"
-            placeholder="Número de tag"
-            class="form-control"
-            type="text"
-            required
-          />
+      <div class="inner">
+      <div class="brand-wide">
+  <img
+    src="https://i.ibb.co/h12X87jS/Sin-t-tulo-2.png"
+    alt="Nexo Tags"
+  />
+</div>
+
+
+        <div class="badge">Accedé a tu panel de Tags</div>
+
+        <h1>Iniciar sesión</h1>
+        <p class="subtitle">
+          Ingresá tu número de tag y contraseña para administrar tu perfil.
+        </p>
+
+        <form class="form" role="form" autocomplete="off" id="formLogin">
+          <div class="form-group">
+            <label class="label" for="tag">Número de tag</label>
+            <input
+              id="tag"
+              name="tag"
+              placeholder="Ej: 123456"
+              class="form-control"
+              type="text"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="label" for="password">Contraseña</label>
+            <input
+              id="password"
+              name="password"
+              placeholder="Tu contraseña"
+              class="form-control"
+              type="password"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <input class="btn btn-success" type="submit" value="Entrar" />
+          </div>
+        </form>
+
+        <div class="links">
+          <a class="link" href="/auth/restorePassword">¿Olvidaste tu contraseña?</a>
+          <a class="link" href="/auth/info">Info de nuestros tags</a>
         </div>
-        <div class="form-group">
-          <input
-            id="password"
-            name="password"
-            placeholder="Contraseña"
-            class="form-control"
-            type="password"
-            required
-          />
+
+        <div class="footer">
+          <div>
+            <a href="https://www.latinmerch.com.ar" target="_blank" rel="noreferrer">
+              www.latinmerch.com.ar
+            </a>
+          </div>
+          <div>Visitá nuestro sitio</div>
         </div>
-        <div class="form-group">
-          <input
-            class="btn btn-success my-3"
-            type="submit"
-            value="Iniciar sesión"
-          />
-        </div>
-      </form>
-      <div class="mt-2">
-        <a href="/auth/restorePassword" style="color:#000; font-weight:600; text-decoration:none;">
-          ¿Olvidaste tu contraseña?
-        </a>
-      </div>
-      <div class="mt-2">
-        <a href="/auth/info" style="color:#000; font-weight:600; text-decoration:none;">
-          Info de nuestros tags
-        </a>
-      </div>
-      <div class="mt-2">
-       
-        WWWW.LATINMERCH.COM.AR 
-        
-        <br>
-        Visitá nuestro sitio
-  
       </div>
     </div>
 

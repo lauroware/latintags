@@ -1,24 +1,133 @@
- <style>
-      /* Estilos CSS */ body { font-family: Arial, sans-serif; background-image:
-      url('https://p4.wallpaperbetter.com/wallpaper/561/441/224/minimalistic-dark-grey-textures-gradient-2000x1200-abstract-textures-hd-art-wallpaper-preview.jpg');
-      background-size: cover; background-repeat: no-repeat; background-position:
-      center; color: #333; display: flex; /* Utilizar flexbox para centrar el
-      contenido verticalmente */ justify-content: center; /* Centrar
-      horizontalmente */ align-items: center; /* Centrar verticalmente */
-      min-height: 100vh; /* Ajustar el tamaño mínimo del cuerpo para ocupar toda
-      la pantalla */ } .containerAuth { max-width: 400px; padding: 20px;
-      background-color: rgba(255, 255, 255, 0.8); border: 1px solid #ddd;
-      border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-      text-align: center; /* Añadido para centrar el contenido */ } h1 {
-      text-align: center; color: #333; } .form-group { margin-bottom: 20px; }
-      .form-control { width: 100%; padding: 10px; border: 1px solid #ddd;
-      border-radius: 5px; } .btn { width: 100%; padding: 10px; border: none;
-      border-radius: 5px; cursor: pointer; font-weight: bold; } .btn-success {
-      background-color: #000000; color: #fff; } .btn-success:hover {
-      background-color: #000000; } .text-left { text-align: left; } /* Estilos
-      para el logo */ .logo { max-width: 100%; /* Ajustar el tamaño máximo del
-      logo */ height: auto; /* Mantener la proporción de la imagen */ }
-    </style>
+<style>
+  :root{
+    --bg:#0b0f14;
+    --panel: rgba(255,255,255,.08);
+    --panelBorder: rgba(255,255,255,.14);
+    --text: rgba(255,255,255,.92);
+    --muted: rgba(255,255,255,.65);
+    --accent:#00a7c4;
+    --accent2:#08b3d5;
+    --shadow: 0 20px 60px rgba(0,0,0,.55);
+    --radius: 18px;
+  }
+
+  body{
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    background:
+      radial-gradient(900px 600px at 20% 10%, rgba(0,167,196,.22), transparent 60%),
+      radial-gradient(700px 500px at 90% 70%, rgba(8,179,213,.18), transparent 55%),
+      linear-gradient(180deg, #0b0f14, #070a0f);
+  }
+
+  /* grid suave */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+    background-size:44px 44px;
+    opacity:.12;
+  }
+
+  /* contenedor con aire */
+  section.container{
+    position:relative;
+    z-index:1;
+  }
+
+  /* cards estilo glass */
+  .card{
+    background: var(--panel) !important;
+    border: 1px solid var(--panelBorder) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: var(--shadow) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    overflow:hidden;
+  }
+
+  /* borde luminoso sutil */
+  .card::after{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    background: linear-gradient(135deg, rgba(0,167,196,.32), transparent 45%, rgba(8,179,213,.22));
+    filter: blur(18px);
+    opacity:.45;
+    pointer-events:none;
+  }
+
+  .card-body{
+    position:relative;
+    z-index:1;
+  }
+
+  /* títulos */
+  h1,h2,h3{
+    color: rgba(255,255,255,.92) !important;
+  }
+
+  .text-muted{
+    color: var(--muted) !important;
+  }
+
+  /* imágenes dentro de cards */
+  .card img{
+    border-radius: 14px !important;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.18);
+  }
+
+  /* CTA button (reemplaza btn-dark) */
+  .btn.btn-dark{
+    background: linear-gradient(135deg, var(--accent), var(--accent2)) !important;
+    border: 0 !important;
+    color: #001018 !important;
+    font-weight: 800 !important;
+    border-radius: 12px !important;
+    padding: 12px 18px !important;
+    box-shadow: 0 12px 30px rgba(0,167,196,.22) !important;
+    transition: transform .08s ease, filter .15s ease;
+  }
+  .btn.btn-dark:hover{ filter: brightness(1.03); }
+  .btn.btn-dark:active{ transform: translateY(1px); }
+
+  /* encabezado (tu bloque text-center) */
+  .page-head{
+    margin-bottom: 26px !important;
+    text-align:center;
+  }
+  .page-head h1{
+    font-weight: 800;
+    letter-spacing: .2px;
+  }
+  .page-head p{
+    max-width: 720px;
+    margin: 0 auto;
+    color: var(--muted);
+  }
+
+  /* mini badge opcional */
+  .badge-nexo{
+    width: fit-content;
+    margin: 0 auto 12px;
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(0,167,196,.12);
+    border: 1px solid rgba(0,167,196,.25);
+    color: rgba(255,255,255,.82);
+  }
+
+</style>
+
+
 <section class="container py-5">
   {{!-- Encabezado --}}
   <div class="text-center mb-5">

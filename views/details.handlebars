@@ -1,146 +1,423 @@
+<!DOCTYPE html>
 <html lang="es">
-
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Información del tag</title>
-    <!-- Agrega la hoja de estilo de Bootstrap y tu propio CSS personalizado -->
+    <title>Información del tag | Nexo Tags</title>
+
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-      body { background-size: cover; /* Ajusta la imagen para cubrir todo el
-      fondo */ background-position: center; /* Centra la imagen en el fondo */
-      background-repeat: no-repeat; /* Evita la repetición de la imagen */
-      {{#if isPetFromProducts}}
-        background-image:
-        url('https://media.istockphoto.com/id/1417882544/es/foto/gran-grupo-de-gatos-y-perros-mirando-a-la-c%C3%A1mara-sobre-fondo-azul.jpg?s=612x612&w=0&k=20&c=24s5hhdBTwmBC5wS5fXqdlAJHGBYGoTmO0iY6IQFwWM=');
+      :root {
+        --panel: rgba(255, 255, 255, 0.10);
+        --panelBorder: rgba(255, 255, 255, 0.16);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.70);
+        --accent: #00a7c4;
+        --accent2: #08b3d5;
+        --shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+        --radius: 18px;
+      }
 
-      {{else if isPersonFromProducts}}
-        background-image:
-        url('https://img.freepik.com/free-vector/geometric-background_53876-115958.jpg');
+      * { box-sizing: border-box; }
 
-      {{else}}
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        color: var(--text);
+        min-height: 100vh;
+
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        {{#if isPetFromProducts}}
+          background-image: url('https://media.istockphoto.com/id/1417882544/es/foto/gran-grupo-de-gatos-y-perros-mirando-a-la-c%C3%A1mara-sobre-fondo-azul.jpg?s=612x612&w=0&k=20&c=24s5hhdBTwmBC5wS5fXqdlAJHGBYGoTmO0iY6IQFwWM=');
+        {{else if isPersonFromProducts}}
+          background-image: url('https://img.freepik.com/free-vector/geometric-background_53876-115958.jpg');
+        {{else}}
+          background-image: url('https://p4.wallpaperbetter.com/wallpaper/561/441/224/minimalistic-dark-grey-textures-gradient-2000x1200-abstract-textures-hd-art-wallpaper-preview.jpg');
+        {{/if}}
+      }
+
+      /* overlay oscuro + tinte nexo */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(900px 600px at 20% 10%, rgba(0, 167, 196, 0.18), transparent 60%),
+          radial-gradient(700px 500px at 90% 70%, rgba(8, 179, 213, 0.14), transparent 55%),
+          linear-gradient(180deg, rgba(0,0,0,0.65), rgba(0,0,0,0.72));
+        pointer-events: none;
+      }
+
+      /* grid suave */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
         background-image:
-        url('https://p4.wallpaperbetter.com/wallpaper/561/441/224/minimalistic-dark-grey-textures-gradient-2000x1200-abstract-textures-hd-art-wallpaper-preview.jpg');
-      {{/if}}
-      } .containerDetails { min-height: 100vh; /* Establece la altura mínima del
-      contenedor como el 100% del viewport height */ display: flex;
-      flex-direction: column; justify-content: center; align-items: center; }
-      .card { width: 80%; /* Ancho de la tarjeta */ text-align: center; /*
-      Centra el contenido de la tarjeta */ } .card-gray { background-color:
-      #dde0e0; /* Color de fondo gris */ padding: 15px; /* Añade un espacio
-      interno para mejorar la apariencia */ margin-bottom: 20px; /* Espaciado
-      inferior */ display: inline-block; /* Alinea la tarjeta gris como un
-      bloque en línea */ } .card-gray h6 { margin-bottom: 0; /* Elimina el
-      margen inferior del subtítulo */ } /* Estilos para el footer */ .footer {
-      text-align: center; margin-top: 20px; background-color: white;} .logo
-      {width: 200px; height: auto;} .card img { max-width: 100%; /* La imagen se
-      ajustará al ancho de la tarjeta */ height: auto; /* La altura se ajustará
-      automáticamente según el ancho */ }
+          linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+        background-size: 44px 44px;
+        opacity: 0.10;
+      }
+
+      .containerDetails {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 28px 16px;
+      }
+
+      /* card premium glass */
+      .card.tag-card {
+        width: min(820px, 100%);
+        text-align: left;
+        background: var(--panel);
+        border: 1px solid var(--panelBorder);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .card.tag-card::after {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        background: linear-gradient(135deg, rgba(0,167,196,0.32), transparent 45%, rgba(8,179,213,0.22));
+        filter: blur(18px);
+        opacity: 0.45;
+        pointer-events: none;
+      }
+
+      .card-body {
+        position: relative;
+        z-index: 1;
+        padding: 18px;
+      }
+
+      /* header visual dentro de card */
+      .hero-img {
+        width: 100%;
+        max-height: 260px;
+        object-fit: cover;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(0,0,0,0.18);
+        box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+        margin-bottom: 14px;
+      }
+
+      .title {
+        margin: 0 0 8px;
+        font-size: clamp(22px, 3vw, 30px);
+        font-weight: 800;
+        letter-spacing: 0.2px;
+        line-height: 1.12;
+      }
+
+      .subtitle {
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 13.5px;
+        line-height: 1.45;
+      }
+
+      /* filas de info */
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .info-item {
+        background: rgba(0,0,0,0.22);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 14px;
+        padding: 10px 12px;
+      }
+
+      .info-label {
+        display: block;
+        font-size: 11px;
+        color: rgba(255,255,255,0.70);
+        margin-bottom: 4px;
+        letter-spacing: 0.2px;
+      }
+
+      .info-value {
+        margin: 0;
+        color: rgba(255,255,255,0.92);
+        font-weight: 700;
+        font-size: 13.5px;
+        word-break: break-word;
+      }
+
+      /* link whatsapp */
+      a.wa-link {
+        color: rgba(255,255,255,0.92);
+        font-weight: 800;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(0,167,196,0.55);
+      }
+      a.wa-link:hover {
+        color: #fff;
+        border-bottom-color: rgba(0,167,196,0.9);
+      }
+
+      /* bloque nota */
+      .note {
+        margin-top: 12px;
+        padding: 12px 12px;
+        border-radius: 14px;
+        background: rgba(0,167,196,0.10);
+        border: 1px solid rgba(0,167,196,0.22);
+        color: rgba(255,255,255,0.86);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      /* logo al final dentro card */
+      .brand-wide {
+        width: calc(100% + 36px);
+        margin: 14px -18px -18px;
+        display: flex;
+        justify-content: center;
+        border-top: 1px solid rgba(255,255,255,0.10);
+        background: rgba(0,0,0,0.18);
+        padding: 10px 0;
+      }
+
+      .brand-wide img {
+        width: 100%;
+        max-width: 520px;
+        height: auto;
+        max-height: 64px;
+        object-fit: contain;
+        display: block;
+      }
+
+      .footer {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        margin-top: 18px;
+        padding: 16px 12px 22px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 12px;
+      }
+
+      .footer a {
+        color: rgba(255, 255, 255, 0.78);
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        color: #fff;
+        text-decoration: underline;
+        text-decoration-color: rgba(0, 167, 196, 0.75);
+        text-underline-offset: 4px;
+      }
+
+      @media (max-width: 720px) {
+        .info-grid { grid-template-columns: 1fr; }
+        .card-body { padding: 16px; }
+        .brand-wide { width: calc(100% + 32px); margin-left: -16px; margin-right: -16px; }
+      }
     </style>
   </head>
 
   <body>
-    <!-- Contenedor principal -->
     <div class="containerDetails container">
-      <!-- Imagen del logo -->
 
-      <!-- Card de Bootstrap para mostrar los datos de la mascota -->
       {{#if isPetFromProducts}}
-
-        <div class="card">
+        <div class="card tag-card">
           <div class="card-body">
-            <img src="{{product.description}}" alt="" />
-            <h1 class="card-title">Hola, soy {{product.title}}</h1>
-            <h6 class="card-subtitle mb-2 text-muted">Descripción:
-              {{product.fechadenacimiento}}</h6>
-            <p class="card-text">Año de nacimiento: {{product.medicamentos}}</p>
-            <p class="card-text">Medicamentos: {{product.enfermedades}}</p>
-            <p class="card-text">Historia clínica:
-              {{product.nombredelhumano}}</p>
-            <p class="card-text">Nombre de mi humano: {{product.telefono}}</p>
-            <p class="card-text">Teléfono:
-              <a
-                href="https://wa.me/+54{{thumbnail}}"
-                target="_blank"
-              >{{product.thumbnail}}</a></p>
-            <p class="card-text">Correo electrónico: {{product.emailP}}</p>
+            <img src="{{product.description}}" alt="" class="hero-img" />
 
-            <p class="card-text">Si me encontraste, por favor teneme paciencia,
-              voy a estar muy asustado.</p>
-            <img
-              src="https://i.postimg.cc/9M0rq7J1/logotags.png"
-              alt="Logo-Veterinaria-Tienda-Mascotas-Simple-Beige-1-colores"
-              class="logo"
-            />
+            <h1 class="title">Hola, soy {{product.title}}</h1>
+            <p class="subtitle">
+              Perfil de mascota — información útil para contacto y cuidado.
+            </p>
+
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Descripción</span>
+                <p class="info-value">{{product.fechadenacimiento}}</p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Año de nacimiento</span>
+                <p class="info-value">{{product.medicamentos}}</p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Medicamentos</span>
+                <p class="info-value">{{product.enfermedades}}</p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Historia clínica</span>
+                <p class="info-value">{{product.nombredelhumano}}</p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Nombre de mi humano</span>
+                <p class="info-value">{{product.telefono}}</p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Teléfono</span>
+                <p class="info-value">
+                  <a class="wa-link" href="https://wa.me/+54{{product.thumbnail}}" target="_blank" rel="noreferrer">
+                    {{product.thumbnail}}
+                  </a>
+                </p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Correo electrónico</span>
+                <p class="info-value">{{product.emailP}}</p>
+              </div>
+            </div>
+
+            <div class="note">
+              Si me encontraste, por favor teneme paciencia: voy a estar asustado.
+              Gracias por ayudarme 🙏
+            </div>
+
+            <div class="brand-wide">
+              <img src="https://i.ibb.co/h12X87jS/Sin-t-tulo-2.png" alt="Nexo Tags" />
+            </div>
           </div>
         </div>
-      {{else if isPersonFromProducts}}
-        <!-- Segundo condicional -->
 
-        <div class="card">
+      {{else if isPersonFromProducts}}
+        <div class="card tag-card">
           <div class="card-body">
-            <img src="{{product.description}}" alt="" />
-            <h1 class="card-title">Hola, soy {{product.title}}</h1>
-            <h6 class="card-subtitle mb-2 text-muted">Sobre mi:
-              {{product.fechadenacimiento}}</h6>
-            <p class="card-text">Fecha de nacimiento:
-              {{product.medicamentos}}</p>
-            <p class="card-text">Medicamentos: {{product.enfermedades}}</p>
-            <p class="card-text">Historia clínica:
-              {{product.nombredelhumano}}</p>
-            <p class="card-text">Contacto de referencia:
-              {{product.telefono}}</p>
-            <p class="card-text">Teléfono:
-              <a
-                href="https://wa.me/+54{{thumbnail}}"
-                target="_blank"
-              >{{product.thumbnail}}</a></p>
-            <p class="card-text">Dirección: {{product.emailP}}</p>
+            <img src="{{product.description}}" alt="" class="hero-img" />
+
+            <h1 class="title">Hola, soy {{product.title}}</h1>
+            <p class="subtitle">
+              Perfil personal — información importante para emergencias / contacto.
+            </p>
+
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Sobre mí</span>
+                <p class="info-value">{{product.fechadenacimiento}}</p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Fecha de nacimiento</span>
+                <p class="info-value">{{product.medicamentos}}</p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Medicamentos</span>
+                <p class="info-value">{{product.enfermedades}}</p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Historia clínica</span>
+                <p class="info-value">{{product.nombredelhumano}}</p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Contacto de referencia</span>
+                <p class="info-value">{{product.telefono}}</p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Teléfono</span>
+                <p class="info-value">
+                  <a class="wa-link" href="https://wa.me/+54{{product.thumbnail}}" target="_blank" rel="noreferrer">
+                    {{product.thumbnail}}
+                  </a>
+                </p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Dirección</span>
+                <p class="info-value">{{product.emailP}}</p>
+              </div>
+            </div>
+
+            <div class="brand-wide">
+              <img src="https://i.ibb.co/h12X87jS/Sin-t-tulo-2.png" alt="Nexo Tags" />
+            </div>
           </div>
         </div>
 
       {{else}}
-        <div class="card">
+        <div class="card tag-card">
           <div class="card-body">
-            <div class="card-gray">
-              <h1
-                class="card-subtitle mb-2 text-muted"
-              >{{product.fechadenacimiento}}</h1>
+            <h1 class="title">{{product.fechadenacimiento}}</h1>
+            <p class="subtitle">Información del tag — contacto rápido.</p>
+
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Nombre de contacto</span>
+                <p class="info-value">{{product.telefono}}</p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Teléfono</span>
+                <p class="info-value">
+                  <a class="wa-link" href="https://wa.me/+54{{product.thumbnail}}" target="_blank" rel="noreferrer">
+                    {{product.thumbnail}}
+                  </a>
+                </p>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Correo electrónico</span>
+                <p class="info-value">{{product.emailP}}</p>
+              </div>
             </div>
-            <p class="card-text">Nombre de Contacto: {{product.telefono}}</p>
-            <p class="card-text">Teléfono:
-              <a
-                href="https://wa.me/+54{{product.thumbnail}}"
-                target="_blank"
-              >{{product.thumbnail}}</a></p>
-            <p class="card-text">Correo electrónico: {{product.emailP}}</p>
 
+            <div class="brand-wide">
+              <img src="https://i.ibb.co/h12X87jS/Sin-t-tulo-2.png" alt="Nexo Tags" />
+            </div>
           </div>
-
         </div>
       {{/if}}
     </div>
 
-    <!-- Footer -->
     <div class="footer">
-
       Desarrollado por
-      <a href="https://lauroware.github.io/portfolio/" target="_blank">Lauro
-        Ware</a>
+      <a href="https://lauroware.github.io/portfolio/" target="_blank" rel="noreferrer">Lauro Ware</a>
       <br />
       Sitio de nuestra empresa:
-      <a href="www.totinas.com.ar"> Totinas</a>
+      <a href="https://www.totinas.com.ar" target="_blank" rel="noreferrer">Totinas</a>
     </div>
 
-    <!-- Agrega la librería de Bootstrap y jQuery (necesaria para Bootstrap) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     ></script>
     <script src="/js/cart.js"></script>
   </body>
-
 </html>
