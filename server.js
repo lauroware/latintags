@@ -80,9 +80,13 @@ app.use(addLogger);
 app.use(errorHandler);
 app.use(passport.initialize());
 
-// Expone isSuperAdmin a todas las vistas del layout
+// Expone variables de rol a todas las vistas del layout
 app.use((req, res, next) => {
-  res.locals.isSuperAdmin = req.session?.user?.role === "superadmin";
+  const role = req.session?.user?.role;
+  res.locals.isSuperAdmin = role === "superadmin";
+  res.locals.isAdmin  = role === "admin";
+  res.locals.isAdmin1 = role === "admin1";
+  res.locals.isAdmin2 = role === "admin2";
   next();
 });
 app.use("/auth", authRouter);

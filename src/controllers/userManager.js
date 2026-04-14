@@ -52,21 +52,13 @@ const login = async (req, res) => {
 
     req.session.user = user;
 
-    const redirectMap = {
-      admin:      "/auth/adminView",
-      admin1:     "/auth/adminView1",
-      admin2:     "/auth/adminView2",
-      superadmin: "/superadmin",
-      premium:    "/auth/premiumView",
-    };
-
     const response = {
       status: "success",
       payload: {
         message: "Inicio de sesión exitoso",
         userDate: userDate,
       },
-      redirectTo: redirectMap[user.role] || "/api/products",
+      redirectTo: "/api/products",
     };
     res.send(response);
   } catch (error) {
