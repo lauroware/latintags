@@ -180,6 +180,7 @@ const requestRestorePassword = async (req, res) => {
     await serviceCreateToken({ token: code, user: tag, expiresAt });
 
     await transporter.sendMail({
+      from: "ventas@latinmerch.com.ar",
       to: normalizedEmail,
       subject: "Código para restablecer tu contraseña",
       html: `
