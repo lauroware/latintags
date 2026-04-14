@@ -1,22 +1,12 @@
 import QRCode from "qrcode";
-import path from "path";
-import fs from "fs";
-import { fileURLToPath } from "url";
 import { productModel } from "../models/products.model.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// Carpeta donde se guardan los QR generados: public/qr/
-const QR_DIR = path.join(__dirname, "../../public/qr");
-if (!fs.existsSync(QR_DIR)) fs.mkdirSync(QR_DIR, { recursive: true });
-
-const BASE_URL =
-  process.env.BASE_URL || "https://tags.latinmerch.com.ar";
+const BASE_URL = process.env.BASE_URL || "https://tags.latinmerch.com.ar";
 
 /**
  * GET /qr/:pid
- * Genera el QR del producto, lo guarda en public/qr/<pid>.png
- * y lo devuelve como descarga directa.
+ * Genera el QR en memoria y lo devuelve como PNG descargable.
+ * Compatible con entornos serverless (Vercel) — no escribe en disco.
  */
 const generateQR = async (req, res) => {
   try {
@@ -28,23 +18,17 @@ const generateQR = async (req, res) => {
     }
 
     const url = `${BASE_URL}/api/products/${pid}`;
-    const filePath = path.join(QR_DIR, `${pid}.png`);
 
-    // Generar PNG y guardarlo en disco
-    await QRCode.toFile(filePath, url, {
+    const buffer = await QRCode.toBuffer(url, {
       type: "png",
       width: 400,
       margin: 2,
-      color: {
-        dark: "#000000",
-        light: "#ffffff",
-      },
+      color: { dark: "#000000", light: "#ffffff" },
     });
 
-    // Devolver el archivo como descarga
-    res.setHeader("Content-Disposition", `attachment; filename="qr-tag-${product.tag}.png"`);
     res.setHeader("Content-Type", "image/png");
-    res.sendFile(filePath);
+    res.setHeader("Content-Disposition", `attachment; filename="qr-tag-${product.tag}.png"`);
+    res.send(buffer);
   } catch (error) {
     console.error("Error generando QR:", error);
     res.status(500).json({ status: "error", message: "Error al generar el QR." });
@@ -53,7 +37,7 @@ const generateQR = async (req, res) => {
 
 /**
  * GET /qr/:pid/view
- * Devuelve el QR inline (para mostrar en pantalla, no como descarga).
+ * Devuelve el QR como base64 JSON (para mostrar en pantalla).
  */
 const viewQR = async (req, res) => {
   try {
@@ -65,8 +49,6 @@ const viewQR = async (req, res) => {
     }
 
     const url = `${BASE_URL}/api/products/${pid}`;
-
-    // Devolver como data URL base64 (útil para mostrar en la vista sin guardar)
     const dataUrl = await QRCode.toDataURL(url, {
       width: 400,
       margin: 2,
