@@ -37,6 +37,11 @@
             </li>
           </ul>
           <ul class="navbar-nav">
+            {{#if isSuperAdmin}}
+              <li class="nav-item">
+                <a class="nav-link btn btn-outline-warning" href="/superadmin">Panel Superadmin</a>
+              </li>
+            {{/if}}
             {{#if isAdmin}}
               <li class="nav-item">
                 <a
@@ -80,3 +85,6 @@
     {{/if}}
   </body>
 </html>
+//modificaciones
+
+

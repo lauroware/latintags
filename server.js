@@ -10,6 +10,7 @@ import MongoStore from "connect-mongo";
 import authRouter from "./src/routes/auth.js";
 import productsRouter from "./src/routes/products.js";
 import mockRouter from "./src/routes/mockingProducts.js";
+import superAdminRouter from "./src/routes/superAdmin.js";
 import { engine } from "express-handlebars";
 import { SECRET_KEY, DB_URL } from "./src/config/index.config.js";
 import { fileURLToPath } from "url";
@@ -76,58 +77,17 @@ app.use(express.static(path.join(__dirname, "public"))); // Corrige la ubicació
 app.use(addLogger);
 app.use(errorHandler);
 app.use(passport.initialize());
+
+// Expone isSuperAdmin a todas las vistas del layout
+app.use((req, res, next) => {
+  res.locals.isSuperAdmin = req.session?.user?.role === "superadmin";
+  next();
+});
 app.use("/auth", authRouter);
 app.use("/api/products", authMiddleware, productsRouter);
+app.use("/superadmin", superAdminRouter);
 app.get("/publicKey", getPublicKey);
 
-app.get("/admin", async (req, res) => {
-  // Obtén el ID del usuario de alguna manera. Esto dependerá de cómo estés manejando la autenticación.
-  // Por ejemplo, si estás utilizando Passport y sesiones, podrías obtenerlo de req.user._id.
-  const userId = req.user._id;
-
-  // Utiliza el ID del usuario para filtrar los productos
-  const products = await productModel.find({ userId: userId });
-
-  // Renderiza la vista de administrador con los productos filtrados
-  res.render("admin", { allProducts: products });
-});
-
-app.get("/admin1", async (req, res) => {
-  // Obtén el ID del usuario de alguna manera. Esto dependerá de cómo estés manejando la autenticación.
-  // Por ejemplo, si estás utilizando Passport y sesiones, podrías obtenerlo de req.user._id.
-  const userId = req.user._id;
-
-  // Utiliza el ID del usuario para filtrar los productos
-  const products = await productModel.find({ userId: userId });
-
-  // Renderiza la vista de administrador con los productos filtrados
-  res.render("admin1", { allProducts: products });
-});
-app.get("/admin2", async (req, res) => {
-  // Obtén el ID del usuario de alguna manera. Esto dependerá de cómo estés manejando la autenticación.
-  // Por ejemplo, si estás utilizando Passport y sesiones, podrías obtenerlo de req.user._id.
-  const userId = req.user._id;
-
-  // Utiliza el ID del usuario para filtrar los productos
-  const products = await productModel.find({ userId: userId });
-
-  // Renderiza la vista de administrador con los productos filtrados
-  res.render("admin2", { allProducts: products });
-});
-
-app.get("/contacto", async (req, res) => {
-  // Obtén el ID del usuario de alguna manera. Esto dependerá de cómo estés manejando la autenticación.
-  // Por ejemplo, si estás utilizando Passport y sesiones, podrías obtenerlo de req.user._id.
-  const userId = req.user._id;
-
-  // Utiliza el ID del usuario para filtrar los productos
-  const products = await productModel.find({ userId: userId });
-
-  // Renderiza la vista de administrador con los productos filtrados
-  res.render("contacto", { allProducts: products });
-});
-
-// Manejo de errores y logging
 app.get("/loggerTest", (req, res) => {
   req.logger.warning("ALERTA!");
   res.send({ message: "Prueba de logger" });
@@ -135,10 +95,6 @@ app.get("/loggerTest", (req, res) => {
 app.get("/", (req, res) => {
   res.redirect("/auth/login");
 });
-
-app.use("/auth", productRoutes);
-
-// Documentación de Swagger
 const swaggerOptions = {
   definition: {
     openapi: "3.0.1",
@@ -160,18 +116,6 @@ app.use((req, res, next) => {
   } else {
     res.redirect("/api/products");
   }
-});
-
-let userTag = "";
-
-// Middleware para obtener y almacenar el tag del usuario
-app.use((req, res, next) => {
-  // Aquí debes obtener el tag del usuario de tu sesión o de donde corresponda
-  userTag = req.session.user ? req.session.user.tag : "";
-
-  console.log("Tag del usuario en el middleware:", req.session.user.tag);
-
-  next();
 });
 
 // Exportación del módulo

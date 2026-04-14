@@ -68,6 +68,20 @@ const premiumOrAdmin = async (req, res, next) => {
   return unauthorized(res);
 };
 
+const superAdminOnly = async (req, res, next) => {
+  const sessionUser = req.session?.user;
+  if (!sessionUser?.tag) return unauthorized(res);
+
+  const user = await serviceGetUserByTag(sessionUser.tag);
+  if (user?.role === "superadmin") return next();
+
+  return res.status(403).render("login", {
+    title: "Acceso denegado",
+    style: "index.css",
+    errorMsg: "No tenés permisos para acceder a esta sección.",
+  });
+};
+
 export {
   authMiddleware,
   adminOnly,
@@ -75,4 +89,5 @@ export {
   adminOnly2,
   premiumOnly,
   premiumOrAdmin,
+  superAdminOnly,
 };
