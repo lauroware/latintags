@@ -1,0 +1,398 @@
+<style>
+  :root {
+    --bg: #0b0f14;
+    --panel: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.12);
+    --text: rgba(255,255,255,0.92);
+    --muted: rgba(255,255,255,0.55);
+    --accent: #00a7c4;
+    --danger: #e05555;
+    --success: #2ecc7a;
+    --radius: 14px;
+  }
+  body { background: #0b0f14; color: var(--text); font-family: Inter, system-ui, sans-serif; }
+  .sa-wrapper { max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
+  .sa-header { display: flex; align-items: center; gap: 14px; margin-bottom: 36px; }
+  .sa-badge { background: var(--accent); color: #000; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: .06em; text-transform: uppercase; }
+  .sa-header h1 { font-size: 22px; font-weight: 600; margin: 0; }
+
+  /* Grid principal */
+  .sa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  @media(max-width: 800px) { .sa-grid { grid-template-columns: 1fr; } }
+
+  .sa-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
+  .sa-card h2 { font-size: 15px; font-weight: 600; margin: 0 0 22px; color: var(--accent); letter-spacing: .04em; text-transform: uppercase; }
+
+  /* Formulario */
+  .sa-section-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .sa-field { margin-bottom: 14px; }
+  .sa-field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+  .sa-field input, .sa-field select {
+    width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    border-radius: 8px; padding: 9px 12px; color: var(--text); font-size: 14px;
+    transition: border-color .2s;
+  }
+  .sa-field input:focus, .sa-field select:focus { outline: none; border-color: var(--accent); }
+  .sa-field select option { background: #1a1f28; }
+  .sa-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* Secciones de campos condicionales */
+  .sa-type-fields { display: none; }
+  .sa-type-fields.active { display: block; }
+
+  /* Botón crear */
+  .sa-btn-create {
+    width: 100%; margin-top: 20px; padding: 12px; background: var(--accent);
+    color: #000; font-weight: 700; font-size: 15px; border: none; border-radius: 10px;
+    cursor: pointer; transition: opacity .2s;
+  }
+  .sa-btn-create:hover { opacity: .85; }
+  .sa-btn-create:disabled { opacity: .4; cursor: not-allowed; }
+
+  /* Tabla de usuarios */
+  .sa-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
+  td { padding: 11px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  .badge-role { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-superadmin { background: rgba(0,167,196,.2); color: var(--accent); }
+  .badge-admin   { background: rgba(138,99,210,.2); color: #b08aec; }
+  .badge-admin1  { background: rgba(240,160,60,.2);  color: #f0a03c; }
+  .badge-admin2  { background: rgba(46,204,122,.2);  color: #2ecc7a; }
+  .badge-premium { background: rgba(255,200,40,.2);  color: #ffc828; }
+  .badge-user    { background: rgba(255,255,255,.1);  color: var(--muted); }
+  .btn-del {
+    background: transparent; border: 1px solid var(--danger); color: var(--danger);
+    border-radius: 7px; padding: 4px 10px; font-size: 12px; cursor: pointer; transition: background .2s;
+  }
+  .btn-del:hover { background: rgba(224,85,85,.15); }
+  .no-profile { color: var(--muted); font-style: italic; }
+
+  /* Mensajes de feedback */
+  #sa-feedback {
+    display: none; margin-top: 16px; padding: 12px 16px; border-radius: 10px;
+    font-size: 14px; font-weight: 500;
+  }
+  #sa-feedback.ok  { background: rgba(46,204,122,.15); border: 1px solid rgba(46,204,122,.35); color: var(--success); display: block; }
+  #sa-feedback.err { background: rgba(224,85,85,.15);  border: 1px solid rgba(224,85,85,.35);  color: var(--danger);  display: block; }
+</style>
+
+<div class="sa-wrapper">
+  <div class="sa-header">
+    <span class="sa-badge">Superadmin</span>
+    <h1>Panel de administración de tags</h1>
+  </div>
+
+  <div class="sa-grid">
+
+    <!-- ===== FORMULARIO DE ALTA ===== -->
+    <div class="sa-card">
+      <h2>Crear nuevo tag</h2>
+
+      <div class="sa-section-label">Tipo de perfil</div>
+      <div class="sa-field">
+        <label for="profileType">Tipo</label>
+        <select id="profileType" name="profileType" onchange="switchType(this.value)">
+          <option value="">— Seleccioná un tipo —</option>
+          <option value="pet">🐾 Mascota</option>
+          <option value="object">📦 Objeto</option>
+          <option value="person">👤 Persona</option>
+        </select>
+      </div>
+
+      <div class="sa-section-label">Datos del usuario (cuenta)</div>
+      <div class="sa-row">
+        <div class="sa-field">
+          <label>Número de tag *</label>
+          <input type="text" id="tag" placeholder="ej: 10042" />
+        </div>
+        <div class="sa-field">
+          <label>Rol *</label>
+          <select id="role">
+            <option value="admin">admin (Mascota)</option>
+            <option value="admin1">admin1 (Objeto)</option>
+            <option value="admin2">admin2 (Persona)</option>
+          </select>
+        </div>
+      </div>
+      <div class="sa-row">
+        <div class="sa-field">
+          <label>Nombre *</label>
+          <input type="text" id="first_name" placeholder="Nombre" />
+        </div>
+        <div class="sa-field">
+          <label>Apellido *</label>
+          <input type="text" id="last_name" placeholder="Apellido" />
+        </div>
+      </div>
+      <div class="sa-field">
+        <label>Email *</label>
+        <input type="email" id="email" placeholder="correo@ejemplo.com" />
+      </div>
+      <div class="sa-row">
+        <div class="sa-field">
+          <label>Contraseña *</label>
+          <input type="password" id="password" placeholder="Mínimo 6 caracteres" />
+        </div>
+        <div class="sa-field">
+          <label>Edad *</label>
+          <input type="number" id="age" placeholder="Edad del titular" />
+        </div>
+      </div>
+
+      <div class="sa-section-label">Datos del perfil (página pública)</div>
+      <div class="sa-field">
+        <label id="label-title">Nombre *</label>
+        <input type="text" id="title" placeholder="Nombre que aparece en la página" />
+      </div>
+      <div class="sa-field">
+        <label>Descripción *</label>
+        <input type="text" id="description" placeholder="Breve descripción" />
+      </div>
+      <div class="sa-field">
+        <label>URL de la foto *</label>
+        <input type="url" id="thumbnail" placeholder="https://..." />
+      </div>
+      <div class="sa-field">
+        <label>Email público (visible en perfil)</label>
+        <input type="email" id="emailP" placeholder="Opcional, si es distinto al privado" />
+      </div>
+
+      <!-- CAMPOS MASCOTA -->
+      <div class="sa-type-fields" id="fields-pet">
+        <div class="sa-section-label">Datos de la mascota</div>
+        <div class="sa-row">
+          <div class="sa-field">
+            <label>Fecha de nacimiento</label>
+            <input type="date" id="fechadenacimiento" />
+          </div>
+          <div class="sa-field">
+            <label>Nombre del humano</label>
+            <input type="text" id="nombredelhumano" placeholder="Ej: Juan Pérez" />
+          </div>
+        </div>
+        <div class="sa-field">
+          <label>Teléfono de contacto</label>
+          <input type="text" id="telefono" placeholder="Ej: +54 11 1234-5678" />
+        </div>
+        <div class="sa-field">
+          <label>Medicamentos</label>
+          <input type="text" id="medicamentos" placeholder="Medicamentos actuales" />
+        </div>
+        <div class="sa-field">
+          <label>Historia clínica / enfermedades</label>
+          <input type="text" id="enfermedades" placeholder="Datos de salud relevantes" />
+        </div>
+      </div>
+
+      <!-- CAMPOS PERSONA -->
+      <div class="sa-type-fields" id="fields-person">
+        <div class="sa-section-label">Datos personales</div>
+        <div class="sa-row">
+          <div class="sa-field">
+            <label>Fecha de nacimiento</label>
+            <input type="date" id="fechadenacimiento-person" />
+          </div>
+          <div class="sa-field">
+            <label>Teléfono de contacto</label>
+            <input type="text" id="telefono-person" placeholder="Ej: +54 11 1234-5678" />
+          </div>
+        </div>
+        <div class="sa-field">
+          <label>Nombre del responsable / tutor</label>
+          <input type="text" id="nombredelhumano-person" placeholder="Opcional" />
+        </div>
+      </div>
+
+      <!-- CAMPOS OBJETO: no tiene campos extra -->
+      <div class="sa-type-fields" id="fields-object">
+        <div class="sa-section-label">Datos del objeto</div>
+        <p style="font-size:13px;color:var(--muted);margin:0">Los objetos solo usan los campos generales. Podés agregar más detalle en la descripción.</p>
+      </div>
+
+      <div id="sa-feedback"></div>
+      <button class="sa-btn-create" id="btnCreate" onclick="crearTag()">Crear tag</button>
+    </div>
+
+    <!-- ===== TABLA DE USUARIOS ===== -->
+    <div class="sa-card">
+      <h2>Tags existentes ({{users.length}})</h2>
+      <div class="sa-table-wrap">
+        {{#if users.length}}
+        <table>
+          <thead>
+            <tr>
+              <th>Tag</th>
+              <th>Nombre</th>
+              <th>Rol</th>
+              <th>Perfil</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            {{#each users}}
+            <tr id="row-{{tag}}">
+              <td><strong>#{{tag}}</strong></td>
+              <td style="color:var(--muted)">{{first_name}} {{last_name}}</td>
+              <td><span class="badge-role badge-{{role}}">{{roleLabel}}</span></td>
+              <td>
+                {{#if profile}}
+                  {{profile.title}}
+                {{else}}
+                  <span class="no-profile">Sin perfil</span>
+                {{/if}}
+              </td>
+              <td>
+                <button class="btn-del" onclick="eliminarTag('{{tag}}', this)">Eliminar</button>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        {{else}}
+        <p style="color:var(--muted);text-align:center;padding:30px 0">No hay usuarios creados todavía.</p>
+        {{/if}}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Sincroniza rol automáticamente según tipo de perfil seleccionado
+  function switchType(type) {
+    document.querySelectorAll('.sa-type-fields').forEach(el => el.classList.remove('active'));
+    const titleLabel = document.getElementById('label-title');
+    const roleSelect = document.getElementById('role');
+
+    if (type === 'pet') {
+      document.getElementById('fields-pet').classList.add('active');
+      titleLabel.textContent = 'Nombre de la mascota *';
+      roleSelect.value = 'admin';
+    } else if (type === 'object') {
+      document.getElementById('fields-object').classList.add('active');
+      titleLabel.textContent = 'Nombre del objeto *';
+      roleSelect.value = 'admin1';
+    } else if (type === 'person') {
+      document.getElementById('fields-person').classList.add('active');
+      titleLabel.textContent = 'Nombre de la persona *';
+      roleSelect.value = 'admin2';
+    }
+  }
+
+  function feedback(msg, isError) {
+    const el = document.getElementById('sa-feedback');
+    el.textContent = msg;
+    el.className = isError ? 'err' : 'ok';
+  }
+
+  async function crearTag() {
+    const profileType = document.getElementById('profileType').value;
+    if (!profileType) { feedback('Seleccioná un tipo de perfil primero.', true); return; }
+
+    const btn = document.getElementById('btnCreate');
+    btn.disabled = true;
+    btn.textContent = 'Creando...';
+
+    // Leer campos según tipo
+    const isPet    = profileType === 'pet';
+    const isPerson = profileType === 'person';
+
+    const body = {
+      tag:          document.getElementById('tag').value.trim(),
+      first_name:   document.getElementById('first_name').value.trim(),
+      last_name:    document.getElementById('last_name').value.trim(),
+      email:        document.getElementById('email').value.trim(),
+      password:     document.getElementById('password').value,
+      age:          document.getElementById('age').value,
+      role:         document.getElementById('role').value,
+      profileType,
+      title:        document.getElementById('title').value.trim(),
+      description:  document.getElementById('description').value.trim(),
+      thumbnail:    document.getElementById('thumbnail').value.trim(),
+      emailP:       document.getElementById('emailP').value.trim(),
+      // Campos específicos
+      fechadenacimiento: isPet    ? document.getElementById('fechadenacimiento').value
+                        : isPerson ? document.getElementById('fechadenacimiento-person').value
+                        : '',
+      medicamentos:  isPet ? document.getElementById('medicamentos').value.trim() : '',
+      enfermedades:  isPet ? document.getElementById('enfermedades').value.trim() : '',
+      nombredelhumano: isPet    ? document.getElementById('nombredelhumano').value.trim()
+                      : isPerson ? document.getElementById('nombredelhumano-person').value.trim()
+                      : '',
+      telefono: isPet    ? document.getElementById('telefono').value.trim()
+               : isPerson ? document.getElementById('telefono-person').value.trim()
+               : '',
+    };
+
+    try {
+      const res = await fetch('/superadmin/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        feedback(data.message || 'Error al crear el tag.', true);
+      } else {
+        feedback(`✓ Tag #${body.tag} creado correctamente.`, false);
+        agregarFilaTabla(body, profileType);
+        limpiarFormulario();
+      }
+    } catch (err) {
+      feedback('Error de conexión. Intentá de nuevo.', true);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Crear tag';
+    }
+  }
+
+  async function eliminarTag(tag, btnEl) {
+    if (!confirm(`¿Eliminás el tag #${tag}? Esta acción no se puede deshacer.`)) return;
+    btnEl.disabled = true;
+    try {
+      const res = await fetch(`/superadmin/tag/${tag}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (res.ok) {
+        const row = document.getElementById('row-' + tag);
+        if (row) row.remove();
+      } else {
+        alert(data.message || 'Error al eliminar.');
+        btnEl.disabled = false;
+      }
+    } catch {
+      alert('Error de conexión.');
+      btnEl.disabled = false;
+    }
+  }
+
+  function agregarFilaTabla(body, profileType) {
+    const tbody = document.getElementById('usersTableBody');
+    if (!tbody) return;
+    const roleLabels = { admin: 'Mascota', admin1: 'Objeto', admin2: 'Persona' };
+    const tr = document.createElement('tr');
+    tr.id = 'row-' + body.tag;
+    tr.innerHTML = `
+      <td><strong>#${body.tag}</strong></td>
+      <td style="color:var(--muted)">${body.first_name} ${body.last_name}</td>
+      <td><span class="badge-role badge-${body.role}">${roleLabels[body.role] || body.role}</span></td>
+      <td>${body.title}</td>
+      <td><button class="btn-del" onclick="eliminarTag('${body.tag}', this)">Eliminar</button></td>
+    `;
+    tbody.prepend(tr);
+  }
+
+  function limpiarFormulario() {
+    ['tag','first_name','last_name','email','password','age','title','description',
+     'thumbnail','emailP','fechadenacimiento','medicamentos','enfermedades',
+     'nombredelhumano','telefono','fechadenacimiento-person','telefono-person',
+     'nombredelhumano-person'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('profileType').value = '';
+    document.querySelectorAll('.sa-type-fields').forEach(el => el.classList.remove('active'));
+  }
+</script>
