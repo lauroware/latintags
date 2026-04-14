@@ -35,3 +35,31 @@ const updateProduct = async (pid) => {
     Swal.fire("Error", "Error de conexión.", "error");
   }
 };
+
+const uploadFoto = async (input, pid) => {
+  const file = input.files[0];
+  if (!file) return;
+
+  const status = document.getElementById(`uploadStatus-${pid}`);
+  status.textContent = "Subiendo...";
+
+  const formData = new FormData();
+  formData.append("image", file);
+
+  try {
+    const res = await fetch("/upload", { method: "POST", body: formData });
+    const data = await res.json();
+
+    if (res.ok) {
+      document.getElementById(`newThumbnail-${pid}`).value = data.url;
+      status.textContent = "✓ Foto subida";
+      status.style.color = "#2ecc7a";
+    } else {
+      status.textContent = data.message || "Error al subir";
+      status.style.color = "#e05555";
+    }
+  } catch {
+    status.textContent = "Error de conexión";
+    status.style.color = "#e05555";
+  }
+};

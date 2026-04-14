@@ -12,6 +12,7 @@ import productsRouter from "./src/routes/products.js";
 import mockRouter from "./src/routes/mockingProducts.js";
 import superAdminRouter from "./src/routes/superAdmin.js";
 import qrRouter from "./src/routes/qr.js";
+import uploadRouter from "./src/routes/upload.js";
 import { engine } from "express-handlebars";
 import { SECRET_KEY, DB_URL } from "./src/config/index.config.js";
 import { fileURLToPath } from "url";
@@ -88,6 +89,7 @@ app.use("/auth", authRouter);
 app.use("/api/products", authMiddleware, productsRouter);
 app.use("/superadmin", superAdminRouter);
 app.use("/qr", qrRouter);
+app.use("/upload", uploadRouter);
 app.get("/publicKey", getPublicKey);
 
 app.get("/loggerTest", (req, res) => {

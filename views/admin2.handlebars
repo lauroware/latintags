@@ -1,406 +1,23 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Panel de Control | Nexo Tags · Mi perfil</title>
+<style>
+  .containerAdmin { display: flex; flex-direction: column; align-items: center; }
+  .productsAdmin { display: flex; flex-wrap: wrap; justify-content: center; }
+  .card { margin: 10px; width: 420px; }
+  .footer { text-align: center; margin-top: 20px; }
+  .title-container { background-color: #f0f0f0; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center; width: 80%; }
+  .title-container h1 { margin: 0; font-size: 24px; color: #333; }
+  .card-footer { display: flex; flex-direction: column; align-items: stretch; }
+  .card-footer button, .card-footer a { width: 100%; margin-top: 5px; }
+  .check-label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #555; white-space: nowrap; cursor: pointer; margin-top: 4px; }
+</style>
 
-  <!-- Bootstrap 5 (solo utilidades base) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Google Fonts + Font Awesome 6 -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-
-  <style>
-    /* ========== DARK / NEXO THEME (mismo estilo que el home) ========== */
-    :root {
-      --bg: #0b0f14;
-      --panel: rgba(255, 255, 255, 0.06);
-      --panelBorder: rgba(255, 255, 255, 0.12);
-      --text: rgba(255, 255, 255, 0.92);
-      --muted: rgba(255, 255, 255, 0.68);
-      --accent: #00a7c4;
-      --accent2: #08b3d5;
-      --accentSoft: rgba(0, 167, 196, 0.2);
-      --cardBg: rgba(18, 24, 32, 0.7);
-      --shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
-      --radius: 24px;
-      --radiusCard: 20px;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: radial-gradient(900px 600px at 20% 10%, rgba(0, 167, 196, 0.2), transparent 60%),
-                  radial-gradient(800px 600px at 85% 80%, rgba(8, 179, 213, 0.18), transparent 55%),
-                  linear-gradient(145deg, #0b0f14 0%, #05080c 100%);
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-      color: var(--text);
-      min-height: 100vh;
-      padding: 2rem 1rem;
-      position: relative;
-    }
-
-    /* grilla de fondo sutil */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image: linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-      background-size: 48px 48px;
-      z-index: 0;
-    }
-
-    .containerAdmin {
-      position: relative;
-      z-index: 2;
-      max-width: 1400px;
-      margin: 0 auto;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* ========== TARJETA PRINCIPAL (encabezado) ========== */
-    .title-container {
-      width: 100%;
-      max-width: 880px;
-      margin: 0 auto 2.5rem auto;
-      background: var(--panel);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid var(--panelBorder);
-      border-radius: var(--radius);
-      padding: 2rem 1.8rem;
-      text-align: center;
-      box-shadow: var(--shadow);
-      transition: all 0.2s ease;
-    }
-
-    .title-container h1 {
-      font-size: clamp(1.4rem, 4vw, 1.9rem);
-      font-weight: 700;
-      background: linear-gradient(125deg, #fff, #b0f0ff);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-      letter-spacing: -0.2px;
-      margin: 0;
-    }
-
-    .tag-highlight {
-      display: inline-block;
-      background: linear-gradient(105deg, #00a7c4, #1bcedb);
-      padding: 0.2rem 1rem;
-      border-radius: 60px;
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: #01161e;
-      box-shadow: 0 0 12px rgba(0, 167, 196, 0.5);
-      margin: 0 0.15rem;
-      letter-spacing: 0.5px;
-    }
-
-    .sub-message {
-      margin-top: 1rem;
-      font-size: 0.85rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    /* sección "Mi perfil" */
-    .section-header {
-      width: 100%;
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      margin: 1rem 0 1.8rem 0;
-    }
-
-    .section-header h3 {
-      font-weight: 700;
-      font-size: 1.7rem;
-      letter-spacing: -0.3px;
-      background: linear-gradient(115deg, #eef2ff, #b2f0ff);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-      border-left: 4px solid var(--accent);
-      padding-left: 1rem;
-    }
-
-    .profiles-count {
-      background: rgba(0, 167, 196, 0.18);
-      backdrop-filter: blur(4px);
-      padding: 0.4rem 1rem;
-      border-radius: 40px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: #adeeff;
-      border: 1px solid rgba(0, 167, 196, 0.3);
-    }
-
-    /* GRID DE TARJETAS centrado y responsive */
-    .productsAdmin {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(520px, 1fr));
-      gap: 2rem;
-      width: 100%;
-      justify-items: center;
-      align-items: start;
-    }
-
-    /* CADA CARD: vidrio oscuro, borde elegante */
-    .card {
-      background: var(--cardBg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: var(--radiusCard);
-      width: 100%;
-      transition: transform 0.2s ease, box-shadow 0.25s;
-      box-shadow: 0 15px 35px -12px rgba(0, 0, 0, 0.4);
-      overflow: hidden;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(0, 167, 196, 0.4);
-      box-shadow: 0 25px 40px -14px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 167, 196, 0.2);
-    }
-
-    .card-body {
-      padding: 1.6rem 1.8rem;
-    }
-
-    /* formulario en 2 columnas elegante */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.2rem 1.6rem;
-    }
-
-    .full-width {
-      grid-column: span 2;
-    }
-
-    .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-
-    .field-group label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #b3d9ff;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .field-group label i {
-      font-size: 0.75rem;
-      color: var(--accent);
-    }
-
-    .form-control {
-      background: rgba(10, 14, 23, 0.7);
-      border: 1.2px solid rgba(255, 255, 255, 0.12);
-      border-radius: 16px;
-      padding: 0.7rem 1rem;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #f0f3fa;
-      transition: all 0.2s;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: var(--accent);
-      background: rgba(10, 14, 23, 0.9);
-      box-shadow: 0 0 0 3px rgba(0, 167, 196, 0.3);
-    }
-
-    input[readonly].form-control {
-      background: rgba(0, 0, 0, 0.35);
-      color: #bbdef5;
-      font-family: monospace;
-      font-weight: 500;
-      border-color: rgba(0, 167, 196, 0.3);
-    }
-
-    /* checkbox estilo nexo */
-    .check-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(0, 167, 196, 0.1);
-      padding: 0.45rem 1rem;
-      border-radius: 40px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #caf0ff;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid rgba(0, 167, 196, 0.2);
-      width: auto;
-    }
-
-    .check-label:hover {
-      background: rgba(0, 167, 196, 0.22);
-      border-color: rgba(0, 167, 196, 0.5);
-    }
-
-    .check-label input {
-      width: 1rem;
-      height: 1rem;
-      accent-color: var(--accent);
-      margin: 0;
-      cursor: pointer;
-    }
-
-    /* card footer botones */
-    .card-footer {
-      background: rgba(0, 0, 0, 0.25);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 1.2rem 1.8rem 1.6rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .btn {
-      border-radius: 40px;
-      padding: 0.7rem 1rem;
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.3px;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      border: none;
-    }
-
-    .btn-outline-success {
-      background: linear-gradient(105deg, #0f766e, #0d9488);
-      color: white;
-      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
-    }
-
-    .btn-outline-success:hover {
-      background: linear-gradient(105deg, #0d6e65, #0a5c54);
-      transform: scale(0.98);
-      filter: brightness(1.02);
-    }
-
-    .btn-primary {
-      background: linear-gradient(115deg, #1e3a5f, #0f2c48);
-      color: #e2f0ff;
-      border: 1px solid rgba(0, 167, 196, 0.4);
-    }
-
-    .btn-primary:hover {
-      background: linear-gradient(115deg, #2c4c74, #153653);
-      color: white;
-      border-color: var(--accent);
-    }
-
-    /* text helper */
-    .text-helper {
-      font-size: 0.65rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-top: 4px;
-    }
-
-    /* footer global */
-    .footer {
-      position: relative;
-      z-index: 2;
-      margin-top: 4rem;
-      text-align: center;
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.5);
-      padding: 1.5rem 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .footer a {
-      color: #86e0f0;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .footer a:hover {
-      color: white;
-      text-decoration: underline;
-    }
-
-    @media (max-width: 680px) {
-      .productsAdmin {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-      .form-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-      .full-width {
-        grid-column: span 1;
-      }
-      .card-body {
-        padding: 1.2rem;
-      }
-      .title-container {
-        padding: 1.2rem;
-      }
-      .section-header h3 {
-        font-size: 1.4rem;
-      }
-    }
-  </style>
-</head>
-<body>
-
+<br />
 <div class="containerAdmin">
-  <!-- Encabezado principal estilo nexo -->
   <div class="title-container">
-    <h1>
-      <i class="fas fa-tag"></i> Tu número de tag es 
-      <span class="tag-highlight">{{user.tag}}</span><br />
-      Completá tu perfil y configurá tu correo de recuperación
-    </h1>
-    <div class="sub-message">
-      <i class="fas fa-shield-alt"></i> Datos de contacto privados · El email es clave para recuperar tu cuenta
-    </div>
+    <h1>Tu número de tag es {{user.tag}}.<br />
+      Completá tu perfil y configurá tu correo de recuperación.</h1>
   </div>
 
-  <div class="section-header">
-    <h3><i class="fas fa-user-circle me-2"></i> Mi perfil</h3>
-    <div class="profiles-count">
-      <i class="fas fa-id-card"></i> {{#if allProducts}}{{allProducts.length}}{{else}}0{{/if}} perfiles registrados
-    </div>
-  </div>
+  <h3>Mi perfil:</h3>
 
   <div class="productsAdmin">
     {{#each allProducts}}
@@ -409,74 +26,46 @@
           <form class="form" role="form" autocomplete="off" id="formProductAdmin">
             <input class="form-control" type="hidden" name="productId" value="{{_id}}" />
 
-            <div class="form-grid">
-              <!-- Tag único (readonly) -->
-              <div class="field-group">
-                <label><i class="fas fa-qrcode"></i> TAG</label>
-                <input class="form-control" type="text" value="{{tag}}" readonly />
-              </div>
+            <label>Tag:</label>
+            <input class="form-control" type="text" value="{{tag}}" readonly />
 
-              <!-- Email recuperación -->
-              <div class="field-group">
-                <label><i class="fas fa-envelope"></i> Email recuperación</label>
-                <input id="newEmail-{{_id}}" class="form-control" type="email" name="email" value="{{email}}" placeholder="tuemail@nexotags.com" />
-                <div class="text-helper"><i class="fas fa-lock"></i>                 <div class="text-helper"><i class="fas fa-lock"></i> Completalo para poder realizar, en caso de necesitar, cambio de contraseña. Si queres publicarlo en tu perfil, marcá la siguiente casilla.</div>
-</div>
-              </div>
+            <label>Email (privado — para recuperar tu contraseña):</label>
+            <input id="newEmail-{{_id}}" class="form-control" type="email" name="email" value="{{email}}" />
+            <label class="check-label">
+              <input id="newMostrarEmail-{{_id}}" type="checkbox" name="mostrarEmail" {{#if mostrarEmail}}checked{{/if}} />
+              Mostrar email en mi página pública
+            </label>
 
-              <!-- Mostrar email público (checkbox) -->
-              <div class="field-group full-width">
-                <label class="check-label">
-                  <input id="newMostrarEmail-{{_id}}" type="checkbox" name="mostrarEmail" {{#if mostrarEmail}}checked{{/if}} />
-                  <i class="fas fa-globe"></i> Mostrar email en mi página pública
-                </label>
-              </div>
+            <label>Nombre:</label>
+            <input id="newTitle-{{_id}}" class="form-control" type="text" name="title" value="{{title}}" />
 
-              <!-- Nombre -->
-              <div class="field-group">
-                <label><i class="fas fa-user"></i> Nombre</label>
-                <input id="newTitle-{{_id}}" class="form-control" type="text" name="title" value="{{title}}" placeholder="Tu nombre completo" />
-              </div>
 
-              <!-- URL foto -->
-              <div class="field-group">
-                <label><i class="fas fa-image"></i> URL de la foto</label>
-                <input id="newThumbnail-{{_id}}" class="form-control" type="text" name="thumbnail" value="{{thumbnail}}" placeholder="https://..." />
-              </div>
-
-              <!-- Descripción / Sobre mí -->
-              <div class="field-group full-width">
-                <label><i class="fas fa-align-left"></i> Descripción / Sobre mí</label>
-                <input id="newDescription-{{_id}}" class="form-control" type="text" name="description" value="{{description}}" placeholder="Breve biografía, intereses, lo que quieras compartir" />
-              </div>
-
-              <!-- Fecha de nacimiento -->
-              <div class="field-group">
-                <label><i class="fas fa-cake-candles"></i> Fecha de nacimiento</label>
-                <input id="newFechadenacimiento-{{_id}}" class="form-control" type="text" name="fechadenacimiento" value="{{fechadenacimiento}}" placeholder="DD/MM/AAAA" />
-              </div>
-
-              <!-- Contacto de referencia -->
-              <div class="field-group">
-                <label><i class="fas fa-address-book"></i> Contacto de referencia</label>
-                <input id="newNombredelhumano-{{_id}}" class="form-control" type="text" name="nombredelhumano" value="{{nombredelhumano}}" placeholder="Persona de confianza (opcional)" />
-              </div>
-
-              <!-- Teléfono -->
-              <div class="field-group full-width">
-                <label><i class="fas fa-phone-alt"></i> Teléfono</label>
-                <input id="newTelefono-{{_id}}" class="form-control" type="text" name="telefono" value="{{telefono}}" placeholder="+54 9 11 1234-5678" />
-              </div>
+            <label>URL de la foto:</label>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input id="newThumbnail-{{_id}}" class="form-control" type="text" name="thumbnail" value="{{thumbnail}}" placeholder="https://... o subí una foto" />
+              <label class="btn btn-outline-secondary btn-sm mb-0" style="cursor:pointer;white-space:nowrap">
+                Subir foto
+                <input type="file" accept="image/*" style="display:none" onchange="uploadFoto(this, '{{_id}}')" />
+              </label>
             </div>
+            <small id="uploadStatus-{{_id}}" style="color:#888"></small>
+
+            <label>Descripción / Sobre mí:</label>
+            <input id="newDescription-{{_id}}" class="form-control" type="text" name="description" value="{{description}}" />
+
+            <label>Fecha de nacimiento:</label>
+            <input id="newFechadenacimiento-{{_id}}" class="form-control" type="text" name="fechadenacimiento" value="{{fechadenacimiento}}" />
+
+            <label>Contacto de referencia:</label>
+            <input id="newNombredelhumano-{{_id}}" class="form-control" type="text" name="nombredelhumano" value="{{nombredelhumano}}" />
+
+            <label>Teléfono:</label>
+            <input id="newTelefono-{{_id}}" class="form-control" type="text" name="telefono" value="{{telefono}}" />
           </form>
         </div>
         <div class="card-footer">
-          <button type="button" class="btn btn-outline-success" onclick="updateProduct('{{_id}}')">
-            <i class="fas fa-save"></i> Guardar cambios
-          </button>
-          <a href="api/products/{{this._id}}" class="btn btn-primary">
-            <i class="fas fa-external-link-alt"></i> Ver página pública
-          </a>
+          <button type="button" class="btn btn-outline-success" onclick="updateProduct('{{_id}}')">Guardar cambios</button>
+          <a href="api/products/{{this._id}}" class="btn btn-primary">Ver página pública</a>
         </div>
       </div>
     {{/each}}
@@ -484,30 +73,8 @@
 </div>
 
 <div class="footer">
-  <i class="fas fa-code-branch"></i> Desarrollado por <a href="https://lauroware.github.io/portfolio/" target="_blank">Lauro Ware</a> &nbsp;|&nbsp;
-  <i class="fas fa-store"></i> <a href="https://www.totinas.com.ar" target="_blank">Totinas</a> — Identidad y seguridad digital
+  Desarrollado por <a href="https://lauroware.github.io/portfolio/" target="_blank">Lauro Ware</a><br />
+  Sitio de nuestra empresa: <a href="https://www.totinas.com.ar">Totinas</a>
 </div>
-
-<!-- Scripts originales (se mantienen exactamente igual) -->
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/adminView2.js"></script>
-
-<!-- Micro fallback por si adminView2.js no define updateProduct (protección) -->
-<script>
-  (function() {
-    if (typeof updateProduct !== 'function') {
-      window.updateProduct = function(id) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error de conexión',
-          text: 'No se pudo actualizar. Verifica la red o recarga la página.',
-          background: '#0f1725',
-          color: '#fff',
-          confirmButtonColor: '#00a7c4'
-        });
-      };
-    }
-  })();
-</script>
-</body>
-</html>
