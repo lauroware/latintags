@@ -3,29 +3,25 @@ import paginate from "mongoose-paginate-v2";
 
 const productSchema = new mongoose.Schema(
   {
-    email: { type: String, required: true, max: 100 },
-    emailP: { type: String, required: true, max: 100 },
-    title: { type: String, required: true, max: 100 },
-    description: { type: String, required: true, max: 100 },
-    // Opcionales: no aplican a todos los tipos de perfil
-    fechadenacimiento: { type: String, default: "" },
-    medicamentos: { type: String, default: "" },
-    enfermedades: { type: String, default: "" },
-    nombredelhumano: { type: String, default: "" },
-    telefono: { type: String, default: "" },
-    thumbnail: { type: String, required: true },
+    email:            { type: String, default: "" },
+    emailP:           { type: String, default: "" },
+    title:            { type: String, default: "" },
+    description:      { type: String, default: "" },
+    fechadenacimiento:{ type: String, default: "" },
+    medicamentos:     { type: String, default: "" },
+    enfermedades:     { type: String, default: "" },
+    nombredelhumano:  { type: String, default: "" },
+    telefono:         { type: String, default: "" },
+    thumbnail:        { type: String, default: "" },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
       required: true,
     },
-    tag: { type: String, required: true },
-    // "pet" | "object" | "person"
-    userId: { type: String, required: true },
+    tag:    { type: String, required: true },
+    userId: { type: String, required: true }, // "pet" | "object" | "person"
   },
-  {
-    versionKey: false,
-  }
+  { versionKey: false }
 );
 
 productSchema.plugin(paginate);

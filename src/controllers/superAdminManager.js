@@ -41,105 +41,49 @@ const getSuperAdminPanel = async (req, res) => {
   }
 };
 
-// Crea usuario + perfil en una sola operación
+// Crea usuario + perfil en una sola operación (solo tag + password + tipo)
 const createTag = async (req, res) => {
   try {
-    const {
-      // Datos del usuario
-      tag,
-      first_name,
-      last_name,
-      email,
-      age,
-      password,
-      role,
-      // Datos del perfil
-      profileType,   // "pet" | "object" | "person"
-      title,
-      description,
-      thumbnail,
-      emailP,
-      // Mascota
-      fechadenacimiento,
-      medicamentos,
-      enfermedades,
-      nombredelhumano,
-      telefono,
-    } = req.body;
+    const { tag, password, role, profileType } = req.body;
 
-    // Validaciones básicas
-    if (!tag || !first_name || !last_name || !email || !age || !password || !role) {
+    if (!tag || !password || !role || !profileType) {
       return res.status(400).json({
         status: "error",
-        message: "Faltan campos obligatorios del usuario.",
+        message: "Faltan campos obligatorios: tag, password, role, profileType.",
       });
     }
 
-    if (!title || !description || !thumbnail) {
-      return res.status(400).json({
-        status: "error",
-        message: "Faltan campos obligatorios del perfil.",
-      });
-    }
-
-    // Verificar que el tag no exista
-    const existingUser = await userModel.findOne({ tag: String(tag) });
-    if (existingUser) {
+    const existingTag = await userModel.findOne({ tag: String(tag) });
+    if (existingTag) {
       return res.status(409).json({
         status: "error",
         message: `El tag "${tag}" ya está en uso.`,
       });
     }
 
-    const existingEmail = await userModel.findOne({ email: email.toLowerCase().trim() });
-    if (existingEmail) {
-      return res.status(409).json({
-        status: "error",
-        message: `El email "${email}" ya está registrado.`,
-      });
-    }
-
-    // Crear usuario (el pre-save del modelo hashea la contraseña automáticamente)
+    // Crear usuario con solo lo mínimo — el usuario completa el resto después
     const newUser = await userModel.create({
-      tag: String(tag),
-      first_name: first_name.trim(),
-      last_name: last_name.trim(),
-      email: email.toLowerCase().trim(),
-      age: Number(age),
-      password,
+      tag:      String(tag),
+      password, // el pre-save del modelo hashea automáticamente
       role,
     });
 
-    // Preparar campos según tipo de perfil
-    const profileData = {
-      tag: String(tag),
-      userId: profileType,
-      title: title.trim(),
-      description: description.trim(),
-      thumbnail: thumbnail.trim(),
-      email: email.toLowerCase().trim(),
-      emailP: (emailP || email).toLowerCase().trim(),
+    // Crear perfil vacío vinculado al usuario
+    await productModel.create({
+      tag:       String(tag),
+      userId:    profileType,
       createdBy: newUser._id,
-      // Campos opcionales según tipo
-      fechadenacimiento: fechadenacimiento || "",
-      medicamentos: medicamentos || "",
-      enfermedades: enfermedades || "",
-      nombredelhumano: nombredelhumano || "",
-      telefono: telefono || "",
-    };
-
-    const newProduct = await productModel.create(profileData);
+    });
 
     return res.status(201).json({
-      status: "success",
+      status:  "success",
       message: `Tag #${tag} creado correctamente.`,
-      user: { tag: newUser.tag, role: newUser.role, email: newUser.email },
-      profile: { title: newProduct.title, type: newProduct.userId },
+      user:    { tag: newUser.tag, role: newUser.role },
     });
   } catch (error) {
     console.error("Error al crear tag:", error);
     return res.status(500).json({
-      status: "error",
+      status:  "error",
       message: error.message || "Error interno al crear el tag.",
     });
   }

@@ -2,27 +2,14 @@ import mongoose from "mongoose";
 import { createHash } from "../utils/index.js";
 
 const userSchema = new mongoose.Schema({
-  tag: { type: String, required: true, unique: true },
-  first_name: {
-    type: String,
-    required: true,
-    max: 100,
-    get: capitalizeFirstLetter,
-  },
-  last_name: {
-    type: String,
-    required: true,
-    max: 100,
-    get: capitalizeFirstLetter,
-  },
-  email: { type: String, unique: true, required: true, max: 100 },
-  age: { type: Number, required: true },
-  password: { type: String, required: true, max: 100 },
-  role: { type: String, default: "user" },
-  lastLoginDate: {
-    type: Date,
-    default: "",
-  },
+  tag:        { type: String, required: true, unique: true },
+  first_name: { type: String, default: "", get: capitalizeFirstLetter },
+  last_name:  { type: String, default: "", get: capitalizeFirstLetter },
+  email:      { type: String, default: "", sparse: true },
+  age:        { type: Number, default: 0 },
+  password:   { type: String, required: true },
+  role:       { type: String, default: "user" },
+  lastLoginDate: { type: Date, default: null },
 });
 
 userSchema.virtual("user").get(function () {

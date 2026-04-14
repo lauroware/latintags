@@ -92,8 +92,8 @@
 
       <div class="sa-section-label">Tipo de perfil</div>
       <div class="sa-field">
-        <label for="profileType">Tipo</label>
-        <select id="profileType" name="profileType" onchange="switchType(this.value)">
+        <label for="profileType">Tipo *</label>
+        <select id="profileType" name="profileType" onchange="syncRole(this.value)">
           <option value="">— Seleccioná un tipo —</option>
           <option value="pet">🐾 Mascota</option>
           <option value="object">📦 Objeto</option>
@@ -101,115 +101,25 @@
         </select>
       </div>
 
-      <div class="sa-section-label">Datos del usuario (cuenta)</div>
+      <div class="sa-section-label">Acceso</div>
       <div class="sa-row">
         <div class="sa-field">
           <label>Número de tag *</label>
           <input type="text" id="tag" placeholder="ej: 10042" />
         </div>
         <div class="sa-field">
-          <label>Rol *</label>
-          <select id="role">
-            <option value="admin">admin (Mascota)</option>
-            <option value="admin1">admin1 (Objeto)</option>
-            <option value="admin2">admin2 (Persona)</option>
-          </select>
-        </div>
-      </div>
-      <div class="sa-row">
-        <div class="sa-field">
-          <label>Nombre *</label>
-          <input type="text" id="first_name" placeholder="Nombre" />
-        </div>
-        <div class="sa-field">
-          <label>Apellido *</label>
-          <input type="text" id="last_name" placeholder="Apellido" />
-        </div>
-      </div>
-      <div class="sa-field">
-        <label>Email *</label>
-        <input type="email" id="email" placeholder="correo@ejemplo.com" />
-      </div>
-      <div class="sa-row">
-        <div class="sa-field">
           <label>Contraseña *</label>
           <input type="password" id="password" placeholder="Mínimo 6 caracteres" />
         </div>
-        <div class="sa-field">
-          <label>Edad *</label>
-          <input type="number" id="age" placeholder="Edad del titular" />
-        </div>
       </div>
 
-      <div class="sa-section-label">Datos del perfil (página pública)</div>
-      <div class="sa-field">
-        <label id="label-title">Nombre *</label>
-        <input type="text" id="title" placeholder="Nombre que aparece en la página" />
-      </div>
-      <div class="sa-field">
-        <label>Descripción *</label>
-        <input type="text" id="description" placeholder="Breve descripción" />
-      </div>
-      <div class="sa-field">
-        <label>URL de la foto *</label>
-        <input type="url" id="thumbnail" placeholder="https://..." />
-      </div>
-      <div class="sa-field">
-        <label>Email público (visible en perfil)</label>
-        <input type="email" id="emailP" placeholder="Opcional, si es distinto al privado" />
+      <div class="sa-field" style="display:none">
+        <input type="text" id="role" />
       </div>
 
-      <!-- CAMPOS MASCOTA -->
-      <div class="sa-type-fields" id="fields-pet">
-        <div class="sa-section-label">Datos de la mascota</div>
-        <div class="sa-row">
-          <div class="sa-field">
-            <label>Fecha de nacimiento</label>
-            <input type="date" id="fechadenacimiento" />
-          </div>
-          <div class="sa-field">
-            <label>Nombre del humano</label>
-            <input type="text" id="nombredelhumano" placeholder="Ej: Juan Pérez" />
-          </div>
-        </div>
-        <div class="sa-field">
-          <label>Teléfono de contacto</label>
-          <input type="text" id="telefono" placeholder="Ej: +54 11 1234-5678" />
-        </div>
-        <div class="sa-field">
-          <label>Medicamentos</label>
-          <input type="text" id="medicamentos" placeholder="Medicamentos actuales" />
-        </div>
-        <div class="sa-field">
-          <label>Historia clínica / enfermedades</label>
-          <input type="text" id="enfermedades" placeholder="Datos de salud relevantes" />
-        </div>
-      </div>
-
-      <!-- CAMPOS PERSONA -->
-      <div class="sa-type-fields" id="fields-person">
-        <div class="sa-section-label">Datos personales</div>
-        <div class="sa-row">
-          <div class="sa-field">
-            <label>Fecha de nacimiento</label>
-            <input type="date" id="fechadenacimiento-person" />
-          </div>
-          <div class="sa-field">
-            <label>Teléfono de contacto</label>
-            <input type="text" id="telefono-person" placeholder="Ej: +54 11 1234-5678" />
-          </div>
-        </div>
-        <div class="sa-field">
-          <label>Nombre del responsable / tutor</label>
-          <input type="text" id="nombredelhumano-person" placeholder="Opcional" />
-        </div>
-      </div>
-
-      <!-- CAMPOS OBJETO: no tiene campos extra -->
-      <div class="sa-type-fields" id="fields-object">
-        <div class="sa-section-label">Datos del objeto</div>
-        <p style="font-size:13px;color:var(--muted);margin:0">Los objetos solo usan los campos generales. Podés agregar más detalle en la descripción.</p>
-      </div>
+      <p style="font-size:13px;color:var(--muted);margin:16px 0 0">
+        El usuario completa su nombre, foto y datos personales al ingresar por primera vez.
+      </p>
 
       <div id="sa-feedback"></div>
       <button class="sa-btn-create" id="btnCreate" onclick="crearTag()">Crear tag</button>
@@ -263,25 +173,11 @@
 </div>
 
 <script>
-  // Sincroniza rol automáticamente según tipo de perfil seleccionado
-  function switchType(type) {
-    document.querySelectorAll('.sa-type-fields').forEach(el => el.classList.remove('active'));
-    const titleLabel = document.getElementById('label-title');
-    const roleSelect = document.getElementById('role');
+  const ROLE_MAP = { pet: 'admin', object: 'admin1', person: 'admin2' };
+  const LABEL_MAP = { pet: 'Mascota', admin: 'Mascota', admin1: 'Objeto', admin2: 'Persona' };
 
-    if (type === 'pet') {
-      document.getElementById('fields-pet').classList.add('active');
-      titleLabel.textContent = 'Nombre de la mascota *';
-      roleSelect.value = 'admin';
-    } else if (type === 'object') {
-      document.getElementById('fields-object').classList.add('active');
-      titleLabel.textContent = 'Nombre del objeto *';
-      roleSelect.value = 'admin1';
-    } else if (type === 'person') {
-      document.getElementById('fields-person').classList.add('active');
-      titleLabel.textContent = 'Nombre de la persona *';
-      roleSelect.value = 'admin2';
-    }
+  function syncRole(type) {
+    document.getElementById('role').value = ROLE_MAP[type] || '';
   }
 
   function feedback(msg, isError) {
@@ -292,59 +188,36 @@
 
   async function crearTag() {
     const profileType = document.getElementById('profileType').value;
-    if (!profileType) { feedback('Seleccioná un tipo de perfil primero.', true); return; }
+    const tag         = document.getElementById('tag').value.trim();
+    const password    = document.getElementById('password').value;
+    const role        = ROLE_MAP[profileType] || '';
+
+    if (!profileType) { feedback('Seleccioná un tipo de perfil.', true); return; }
+    if (!tag)         { feedback('Ingresá el número de tag.', true); return; }
+    if (!password)    { feedback('Ingresá una contraseña.', true); return; }
 
     const btn = document.getElementById('btnCreate');
     btn.disabled = true;
     btn.textContent = 'Creando...';
 
-    // Leer campos según tipo
-    const isPet    = profileType === 'pet';
-    const isPerson = profileType === 'person';
-
-    const body = {
-      tag:          document.getElementById('tag').value.trim(),
-      first_name:   document.getElementById('first_name').value.trim(),
-      last_name:    document.getElementById('last_name').value.trim(),
-      email:        document.getElementById('email').value.trim(),
-      password:     document.getElementById('password').value,
-      age:          document.getElementById('age').value,
-      role:         document.getElementById('role').value,
-      profileType,
-      title:        document.getElementById('title').value.trim(),
-      description:  document.getElementById('description').value.trim(),
-      thumbnail:    document.getElementById('thumbnail').value.trim(),
-      emailP:       document.getElementById('emailP').value.trim(),
-      // Campos específicos
-      fechadenacimiento: isPet    ? document.getElementById('fechadenacimiento').value
-                        : isPerson ? document.getElementById('fechadenacimiento-person').value
-                        : '',
-      medicamentos:  isPet ? document.getElementById('medicamentos').value.trim() : '',
-      enfermedades:  isPet ? document.getElementById('enfermedades').value.trim() : '',
-      nombredelhumano: isPet    ? document.getElementById('nombredelhumano').value.trim()
-                      : isPerson ? document.getElementById('nombredelhumano-person').value.trim()
-                      : '',
-      telefono: isPet    ? document.getElementById('telefono').value.trim()
-               : isPerson ? document.getElementById('telefono-person').value.trim()
-               : '',
-    };
-
     try {
       const res = await fetch('/superadmin/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ tag, password, role, profileType }),
       });
       const data = await res.json();
 
       if (!res.ok) {
         feedback(data.message || 'Error al crear el tag.', true);
       } else {
-        feedback(`✓ Tag #${body.tag} creado correctamente.`, false);
-        agregarFilaTabla(body, profileType);
-        limpiarFormulario();
+        feedback(`✓ Tag #${tag} creado. El usuario completa sus datos al ingresar.`, false);
+        agregarFilaTabla(tag, role);
+        document.getElementById('tag').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('profileType').value = '';
       }
-    } catch (err) {
+    } catch {
       feedback('Error de conexión. Intentá de nuevo.', true);
     } finally {
       btn.disabled = false;
@@ -371,31 +244,19 @@
     }
   }
 
-  function agregarFilaTabla(body, profileType) {
+  function agregarFilaTabla(tag, role) {
     const tbody = document.getElementById('usersTableBody');
     if (!tbody) return;
-    const roleLabels = { admin: 'Mascota', admin1: 'Objeto', admin2: 'Persona' };
+    const label = LABEL_MAP[role] || role;
     const tr = document.createElement('tr');
-    tr.id = 'row-' + body.tag;
+    tr.id = 'row-' + tag;
     tr.innerHTML = `
-      <td><strong>#${body.tag}</strong></td>
-      <td style="color:var(--muted)">${body.first_name} ${body.last_name}</td>
-      <td><span class="badge-role badge-${body.role}">${roleLabels[body.role] || body.role}</span></td>
-      <td>${body.title}</td>
-      <td><button class="btn-del" onclick="eliminarTag('${body.tag}', this)">Eliminar</button></td>
+      <td><strong>#${tag}</strong></td>
+      <td style="color:var(--muted)">—</td>
+      <td><span class="badge-role badge-${role}">${label}</span></td>
+      <td><span style="color:var(--muted);font-style:italic">Sin completar</span></td>
+      <td><button class="btn-del" onclick="eliminarTag('${tag}', this)">Eliminar</button></td>
     `;
     tbody.prepend(tr);
-  }
-
-  function limpiarFormulario() {
-    ['tag','first_name','last_name','email','password','age','title','description',
-     'thumbnail','emailP','fechadenacimiento','medicamentos','enfermedades',
-     'nombredelhumano','telefono','fechadenacimiento-person','telefono-person',
-     'nombredelhumano-person'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = '';
-    });
-    document.getElementById('profileType').value = '';
-    document.querySelectorAll('.sa-type-fields').forEach(el => el.classList.remove('active'));
   }
 </script>
