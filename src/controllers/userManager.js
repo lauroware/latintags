@@ -145,40 +145,41 @@ const renderRestorePassword = async (req, res) => {
 // Paso 1: solicitar código de restablecimiento (se envía por email)
 const requestRestorePassword = async (req, res) => {
   try {
-    const { email } = req.body;
-    const normalizedEmail = String(email || "").trim().toLowerCase();
+    const tag = String(req.body?.tag || "").trim();
 
-    if (!normalizedEmail) {
-      return res
-        .status(400)
-        .send({ status: "error", payload: "Falta el email" });
+    if (!tag) {
+      return res.status(400).send({ status: "error", payload: "Ingresá tu número de tag." });
     }
 
-    // Validar que exista el usuario
-    const user = await serviceGetUserByEmail(normalizedEmail);
+    // Buscar usuario por tag
+    let user;
+    try { user = await serviceGetUserByTag(tag); } catch (e) { user = null; }
+
     if (!user) {
-      return res
-        .status(404)
-        .send({ status: "error", payload: "No existe un usuario con ese email" });
+      return res.status(404).send({ status: "error", payload: "No existe un usuario con ese número de tag." });
     }
 
-    // Generar código y guardarlo como token
+    // Verificar que tenga email cargado
+    if (!user.email) {
+      return res.status(400).send({
+        status: "error",
+        payload: "Tu cuenta no tiene un email configurado. Contactá al administrador para restablecer tu contraseña.",
+      });
+    }
+
+    const normalizedEmail = String(user.email).trim().toLowerCase();
     const code = v4();
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutos
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
-    // Si ya había un token para ese email, lo reemplazamos
+    // Si ya había un token para ese tag, lo reemplazamos
     try {
-      const existing = await serviceFindTokenByUserId(normalizedEmail);
-      if (existing?._id) {
-        await serviceDeleteTokenById(existing._id);
-      }
-    } catch (e) {
-      // no había token, ok
-    }
+      const existing = await serviceFindTokenByUserId(tag);
+      if (existing?._id) await serviceDeleteTokenById(existing._id);
+    } catch (e) { /* no había token, ok */ }
 
-    await serviceCreateToken({ token: code, user: normalizedEmail, expiresAt });
+    // Guardamos el token usando el tag como identificador
+    await serviceCreateToken({ token: code, user: tag, expiresAt });
 
-    // Enviar mail
     await transporter.sendMail({
       from: GMAIL,
       to: normalizedEmail,
@@ -196,54 +197,51 @@ const requestRestorePassword = async (req, res) => {
 
     return res.status(200).send({
       status: "success",
-      payload: "Te enviamos un código a tu email (revisá spam si no llega).",
+      payload: "Te enviamos un código a tu email registrado (revisá spam si no llega).",
     });
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .send({ status: "error", payload: "Error enviando el código" });
+    return res.status(500).send({ status: "error", payload: "Error enviando el código." });
   }
 };
 
 const restorePassword = async (req, res) => {
-  const { email, code, newPassword } = req.body;
+  const { tag, code, newPassword } = req.body;
   try {
-    const normalizedEmail = String(email || "").trim().toLowerCase();
+    const normalizedTag = String(tag || "").trim();
     const normalizedCode = String(code || "").trim();
 
-    if (!normalizedEmail || !normalizedCode || !newPassword) {
-      return res
-        .status(400)
-        .json({ message: "Faltan datos" });
+    if (!normalizedTag || !normalizedCode || !newPassword) {
+      return res.status(400).json({ message: "Faltan datos." });
     }
 
     let tokenReset;
     try {
-      tokenReset = await serviceFindTokenByUserId(normalizedEmail);
+      tokenReset = await serviceFindTokenByUserId(normalizedTag);
     } catch (e) {
-      return res.status(400).json({ message: "No hay un código activo para ese email" });
+      return res.status(400).json({ message: "No hay un código activo para ese tag." });
     }
 
     const expires = new Date(tokenReset.expiresAt).getTime();
     if (tokenReset.token !== normalizedCode || expires < Date.now()) {
-      return res
-        .status(400)
-        .json({ message: "Código de restablecimiento inválido o vencido" });
+      return res.status(400).json({ message: "Código inválido o vencido." });
     }
 
-    const updatedUser = await serviceRestorePassword(normalizedEmail, newPassword);
+    // Buscar usuario por tag para obtener su email y actualizar por tag
+    let user;
+    try { user = await serviceGetUserByTag(normalizedTag); } catch (e) { user = null; }
+    if (!user) return res.status(404).json({ message: "Usuario no encontrado." });
+
+    const updatedUser = await serviceRestorePassword(user.email, newPassword);
 
     await serviceDeleteTokenById(tokenReset._id);
     res.status(200).send({
       status: "success",
-      payload: "User password updated",
+      payload: "Contraseña actualizada correctamente.",
       user: updatedUser,
     });
   } catch (error) {
-    res
-      .status(500)
-      .send({ status: "error", payload: "Error updating user password" });
+    res.status(500).send({ status: "error", payload: "Error actualizando la contraseña." });
   }
 };
 

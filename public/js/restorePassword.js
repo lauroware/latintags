@@ -1,26 +1,21 @@
 const formRequestCode = document.getElementById("formRequestCode");
 const formResetPassword = document.getElementById("formResetPassword");
 
-const getEmail = () => {
-  const emailInput = document.getElementById("email");
-  return String(emailInput?.value || "").trim().toLowerCase();
-};
-
 if (formRequestCode) {
   formRequestCode.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = getEmail();
+    const tag = String(document.getElementById("tag")?.value || "").trim();
 
     try {
       const resp = await fetch("/auth/restorePassword/request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ tag }),
       });
       const data = await resp.json().catch(() => ({}));
 
       if (!resp.ok) {
-        throw new Error(data?.payload || data?.message || "No se pudo enviar el código");
+        throw new Error(data?.payload || data?.message || "No se pudo enviar el código.");
       }
 
       await Swal.fire({
@@ -32,7 +27,7 @@ if (formRequestCode) {
       await Swal.fire({
         icon: "error",
         title: "Ups",
-        text: err?.message || "Error enviando el código",
+        text: err?.message || "Error enviando el código.",
       });
     }
   });
@@ -41,16 +36,16 @@ if (formRequestCode) {
 if (formResetPassword) {
   formResetPassword.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = getEmail();
-    const code = String(document.getElementById("code")?.value || "").trim();
+    const tag         = String(document.getElementById("tag2")?.value || "").trim();
+    const code        = String(document.getElementById("code")?.value || "").trim();
     const newPassword = String(document.getElementById("newPassword")?.value || "");
 
-    if (!email) {
-      await Swal.fire({
-        icon: "warning",
-        title: "Falta el email",
-        text: "Primero completá el email (es el mismo al que pediste el código).",
-      });
+    if (!tag) {
+      await Swal.fire({ icon: "warning", title: "Falta el tag", text: "Ingresá tu número de tag." });
+      return;
+    }
+    if (!code) {
+      await Swal.fire({ icon: "warning", title: "Falta el código", text: "Ingresá el código que recibiste." });
       return;
     }
 
@@ -58,12 +53,12 @@ if (formResetPassword) {
       const resp = await fetch("/auth/restorePassword", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code, newPassword }),
+        body: JSON.stringify({ tag, code, newPassword }),
       });
       const data = await resp.json().catch(() => ({}));
 
       if (!resp.ok) {
-        throw new Error(data?.payload || data?.message || "No se pudo actualizar la contraseña");
+        throw new Error(data?.payload || data?.message || "No se pudo actualizar la contraseña.");
       }
 
       await Swal.fire({
@@ -77,7 +72,7 @@ if (formResetPassword) {
       await Swal.fire({
         icon: "error",
         title: "Ups",
-        text: err?.message || "Error actualizando la contraseña",
+        text: err?.message || "Error actualizando la contraseña.",
       });
     }
   });
