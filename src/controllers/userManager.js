@@ -200,8 +200,8 @@ const requestRestorePassword = async (req, res) => {
       payload: "Te enviamos un código a tu email registrado (revisá spam si no llega).",
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).send({ status: "error", payload: "Error enviando el código." });
+    console.error("ERROR en requestRestorePassword:", error.message, error.stack);
+    return res.status(500).send({ status: "error", payload: error.message || "Error enviando el código." });
   }
 };
 
