@@ -10,3 +10,5 @@ export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 export const STRIPE_PUBLIC_KEY = process.env.STRIPE_PUBLIC_KEY;
 export const GMAIL = process.env.GMAIL;
 export const GMAIL_PASSWORD = process.env.GMAIL_PASSWORD;
+export const BREVO_API_KEY = process.env.BREVO_API_KEY;
+export const EMAIL_FROM = process.env.EMAIL_FROM;

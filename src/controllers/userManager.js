@@ -14,7 +14,6 @@ import { serviceGetPetByUserId } from "../services/product.js";
 import { isValidPassword } from "../utils/index.js";
 import transporter from "../utils/mail.js";
 import { userModel } from "../models/users.model.js";
-import { GMAIL } from "../config/index.config.js";
 import { v4 } from "uuid";
 import {
   serviceCreateToken,
@@ -181,7 +180,6 @@ const requestRestorePassword = async (req, res) => {
     await serviceCreateToken({ token: code, user: tag, expiresAt });
 
     await transporter.sendMail({
-      from: GMAIL,
       to: normalizedEmail,
       subject: "Código para restablecer tu contraseña",
       html: `
