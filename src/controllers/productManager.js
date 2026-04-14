@@ -138,58 +138,38 @@ const updateProduct = async (req, res) => {
 const updateProductEmail = async (req, res) => {
   try {
     const { pid } = req.params;
-    const emailRaw = req.body?.email || req.body?.emailP;
+    const newEmail = String(req.body?.email || "").trim().toLowerCase();
 
-    const newEmail = String(emailRaw || "").trim().toLowerCase();
     if (!newEmail) {
       return res.status(400).send({ message: "Falta el email" });
     }
 
-    // 1) Traer producto para saber su tag
     const product = await productModel.findById(pid).lean();
     if (!product) {
       return res.status(404).send({ message: "Producto inexistente" });
     }
 
-    // 2) Seguridad: solo dueño del tag o admin/premium
     const user = req.session?.user;
-    if (!user) {
-      return res.status(401).send({ message: "Unauthorized" });
-    }
+    if (!user) return res.status(401).send({ message: "Unauthorized" });
 
-    const isAdmin = user.role === "admin" || user.role === "admin1" || user.role === "admin2";
-    const isPremium = user.role === "premium";
+    const isAdmin = ["admin", "admin1", "admin2"].includes(user.role);
     const isOwner = String(user.tag) === String(product.tag);
-
-    if (!isAdmin && !isPremium && !isOwner) {
-      return res.status(401).send({
-        status: "Unauthorized",
-        message: "Unauthorized to do this action",
-        code: 401,
-      });
+    if (!isAdmin && !isOwner) {
+      return res.status(401).send({ status: "Unauthorized", code: 401 });
     }
 
-    // 3) Actualizar Product (email real)
-    const updatedProduct = await productModel.findByIdAndUpdate(
-      pid,
-      { $set: { email: newEmail, emailP: newEmail } },
-      { new: true }
-    );
+    // Actualizar email en product y en user (sincronizados)
+    await productModel.findByIdAndUpdate(pid, { $set: { email: newEmail } });
+    await userModel.updateOne({ tag: product.tag }, { $set: { email: newEmail } });
 
-    // 4) Sincronizar User
-    await userModel.updateOne(
-      { tag: updatedProduct.tag },
-      { $set: { email: newEmail, emailP: newEmail } }
-    );
-
-    // 5) ✅ Refrescar sesión (CLAVE para que no se caiga)
-    const refreshedUser = await userModel.findOne({ tag: updatedProduct.tag }).lean();
+    // Refrescar sesión
+    const refreshedUser = await userModel.findOne({ tag: product.tag }).lean();
     req.session.user = refreshedUser;
 
-    return res.status(200).send(updatedProduct);
+    return res.status(200).send({ status: "success", email: newEmail });
   } catch (error) {
-    console.log(error);
-    return res.status(500).send({ message: "Error updating product email" });
+    console.error(error);
+    return res.status(500).send({ message: "Error updating email" });
   }
 };
 

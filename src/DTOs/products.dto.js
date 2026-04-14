@@ -1,22 +1,12 @@
 class ProductDTO {
   constructor(
-    _id,
-    email,
-    emailP,
-    title,
-    description,
-    fechadenacimiento,
-    medicamentos,
-    enfermedades,
-    nombredelhumano,
-    telefono,
-    thumbnail,
-    tag,
-    userId
+    _id, email, mostrarEmail, title, description,
+    fechadenacimiento, medicamentos, enfermedades,
+    nombredelhumano, telefono, thumbnail, tag, userId
   ) {
     this._id = _id;
     this.email = email;
-    this.emailP = emailP;
+    this.mostrarEmail = mostrarEmail;
     this.title = title;
     this.description = description;
     this.fechadenacimiento = fechadenacimiento;

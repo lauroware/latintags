@@ -7,70 +7,18 @@ import { generateProductErrorInfo } from "../services/errors/info.js";
 import { userModel } from "../models/users.model.js";
 
 const productDtoFromObject = (obj) => {
-  const {
-    _id,
-    email,
-    emailP,
-    title,
-    thumbnail,
-    description,
-    fechadenacimiento,
-    medicamentos,
-    enfermedades,
-    nombredelhumano,
-    telefono,
-    tag,
-    userId,
-  } = obj;
-  return new ProductDTO(
-    _id,
-    email,
-    emailP,
-    title,
-    thumbnail,
-    description,
-    fechadenacimiento,
-    medicamentos,
-    enfermedades,
-    nombredelhumano,
-    telefono,
-    tag,
-    userId
-  );
+  const { _id, email, mostrarEmail, title, thumbnail, description,
+    fechadenacimiento, medicamentos, enfermedades, nombredelhumano, telefono, tag, userId } = obj;
+  return new ProductDTO(_id, email, mostrarEmail, title, description,
+    fechadenacimiento, medicamentos, enfermedades, nombredelhumano, telefono, thumbnail, tag, userId);
 };
 
 const allProductsFromObject = (products) => {
   return products.map((product) => {
-    const {
-      _id,
-      email,
-      emailP,
-      title,
-      description,
-      fechadenacimiento,
-      medicamentos,
-      enfermedades,
-      nombredelhumano,
-      telefono,
-      thumbnail,
-      tag,
-      userId,
-    } = product;
-    return new ProductDTO(
-      _id,
-      email,
-      emailP,
-      title,
-      description,
-      fechadenacimiento,
-      medicamentos,
-      enfermedades,
-      nombredelhumano,
-      telefono,
-      thumbnail,
-      tag,
-      userId
-    );
+    const { _id, email, mostrarEmail, title, description, fechadenacimiento,
+      medicamentos, enfermedades, nombredelhumano, telefono, thumbnail, tag, userId } = product;
+    return new ProductDTO(_id, email, mostrarEmail, title, description,
+      fechadenacimiento, medicamentos, enfermedades, nombredelhumano, telefono, thumbnail, tag, userId);
   });
 };
 

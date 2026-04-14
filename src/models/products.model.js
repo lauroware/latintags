@@ -4,7 +4,7 @@ import paginate from "mongoose-paginate-v2";
 const productSchema = new mongoose.Schema(
   {
     email:            { type: String, default: "" },
-    emailP:           { type: String, default: "" },
+    mostrarEmail:     { type: Boolean, default: false },
     title:            { type: String, default: "" },
     description:      { type: String, default: "" },
     fechadenacimiento:{ type: String, default: "" },

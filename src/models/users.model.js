@@ -3,7 +3,7 @@ import { createHash } from "../utils/index.js";
 
 const userSchema = new mongoose.Schema({
   tag:        { type: String, required: true, unique: true },
-  first_name: { type: String, default: "", get: capitalizeFirstLetter },
+  first_name: { type: String, default: null, get: capitalizeFirstLetter },
   last_name:  { type: String, default: "", get: capitalizeFirstLetter },
   email:      { type: String, default: "", sparse: true },
   age:        { type: Number, default: 0 },
