@@ -8,4 +8,6 @@ const uploadRouter = Router();
 // Solo usuarios autenticados pueden subir imágenes
 uploadRouter.post("/", authMiddleware, upload.single("image"), uploadImage);
 
+//probando
+
 export default uploadRouter;
