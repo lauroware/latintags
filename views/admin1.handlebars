@@ -55,6 +55,12 @@
 </head>
 <body>
 
+  <!-- Navbar Nexo -->
+  <nav style="position:relative;z-index:10;background:rgba(0,0,0,0.45);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.08);padding:0.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;">
+    <a href="/api/products" style="color:#00a7c4;font-weight:700;font-size:0.95rem;text-decoration:none;display:flex;align-items:center;gap:6px;"><i class="fas fa-home"></i> Inicio</a>
+    <a href="/auth/logout" style="color:rgba(255,255,255,0.7);font-size:0.85rem;text-decoration:none;display:flex;align-items:center;gap:6px;"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+  </nav>
+
 <div class="containerAdmin">
   <div class="title-container">
     <h1><i class="fas fa-tag"></i> Tu número de tag es <span class="tag-highlight">{{user.tag}}</span><br />Completá el perfil y configurá tu correo de recuperación</h1>

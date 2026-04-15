@@ -1,3 +1,5 @@
+const BACKEND = "https://latintags.onrender.com";
+
 const updateProduct = async (pid) => {
   const data = {};
   const get = (id) => { const el = document.getElementById(id); return el ? el.value : undefined; };
@@ -17,13 +19,12 @@ const updateProduct = async (pid) => {
     telefono:          get(`newTelefono-${pid}`),
   };
 
-  // Limpiar undefined
   Object.keys(data.updates).forEach(k => data.updates[k] === undefined && delete data.updates[k]);
 
   try {
     const res = await fetch(
-      `${window.location.protocol}//${window.location.host}/api/products/${pid}`,
-      { method: "put", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }
+      `${BACKEND}/api/products/${pid}`,
+      { method: "put", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify(data) }
     );
     if (res.ok) {
       window.location.reload();
@@ -47,7 +48,7 @@ const uploadFoto = async (input, pid) => {
   formData.append("image", file);
 
   try {
-    const res = await fetch("/upload", { method: "POST", body: formData });
+    const res = await fetch(`${BACKEND}/upload`, { method: "POST", body: formData, credentials: "include" });
     const data = await res.json();
 
     if (res.ok) {
