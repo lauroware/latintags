@@ -64,3 +64,22 @@ const uploadFoto = async (input, pid) => {
     status.style.color = "#e05555";
   }
 };
+
+const togglePerdido = async (pid, activar) => {
+  const mensajePerdido = document.getElementById(`newMensajePerdido-${pid}`)?.value || "";
+
+  try {
+    const res = await fetch(`/api/products/${pid}/perdido`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ activar, mensajePerdido }),
+    });
+    if (res.ok) {
+      window.location.reload();
+    } else {
+      Swal.fire("Error", "No se pudo cambiar el modo perdido.", "error");
+    }
+  } catch {
+    Swal.fire("Error", "Error de conexión.", "error");
+  }
+};
