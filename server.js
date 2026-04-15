@@ -1,5 +1,6 @@
 // Importaciones
 import express from "express";
+import cors from "cors";
 import mongoose from "mongoose";
 import session from "express-session";
 import { getPublicKey } from "./src/controllers/stripeManager.js";
@@ -71,6 +72,10 @@ app.use(
   })
 );
 
+app.use(cors({
+  origin: ["https://tags.latinmerch.com.ar", "http://localhost:3000"],
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public"))); // Corrige la ubicación de los archivos estáticos
