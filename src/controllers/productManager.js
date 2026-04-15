@@ -94,10 +94,11 @@ const getProductById = async (req, res) => {
       isPersonFromProducts,
       isAdmin,
       isAdmin1,
-      isAdmin2, // Pasar la variable isAdmin1 a la plantilla
+      isAdmin2,
       isPremium,
       title: "Products",
       style: "index.css",
+      layout: false,
     });
   } catch (error) {
     res.status(500).send({ message: "Error trying to get a product by id" });
