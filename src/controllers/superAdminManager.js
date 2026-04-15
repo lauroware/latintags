@@ -12,8 +12,34 @@ const ROLE_LABEL = {
   user: "Usuario",
 };
 
-// Renderiza el panel con todos los usuarios existentes
-const getSuperAdminPanel = async (req, res) => {
+// Devuelve todos los usuarios con su perfil vinculado (para el panel JS)
+const getSuperAdminUsers = async (req, res) => {
+  try {
+    const allUsers = await userModel.find().lean();
+    const allProducts = await productModel.find().lean();
+
+    const ROLE_TO_TYPE = { admin: "pet", admin1: "object", admin2: "person" };
+
+    const users = allUsers.map((u) => {
+      const profile = allProducts.find((p) => String(p.tag) === String(u.tag));
+      return {
+        _id: u._id,
+        tag: u.tag,
+        first_name: u.first_name || "",
+        last_name: u.last_name || "",
+        role: u.role,
+        profileType: ROLE_TO_TYPE[u.role] || u.role,
+        createdAt: u._id.getTimestamp(),
+        profile: profile ? { _id: profile._id, title: profile.title } : null,
+      };
+    });
+
+    return res.status(200).json({ status: "success", users });
+  } catch (error) {
+    console.error("Error en getSuperAdminUsers:", error);
+    return res.status(500).json({ message: "Error interno del servidor" });
+  }
+};
   try {
     const allUsers = await userModel.find().lean();
     const allProducts = await productModel.find().lean();
@@ -39,7 +65,7 @@ const getSuperAdminPanel = async (req, res) => {
     console.error("Error en superAdmin panel:", error);
     res.status(500).send({ message: "Error interno del servidor" });
   }
-};
+;
 
 // Crea usuario + perfil en una sola operación (solo tag + password + tipo)
 const createTag = async (req, res) => {
@@ -118,4 +144,4 @@ const deleteTag = async (req, res) => {
   }
 };
 
-export { getSuperAdminPanel, createTag, deleteTag };
+export { getSuperAdminPanel, getSuperAdminUsers, createTag, deleteTag };
