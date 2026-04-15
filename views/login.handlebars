@@ -264,10 +264,84 @@
         border: 1px solid rgba(0, 167, 196, 0.25);
         color: rgba(255, 255, 255, 0.82);
       }
+
+      /* ===== PANTALLA DE CARGA ===== */
+      #loading-screen {
+        position: fixed;
+        inset: 0;
+        background: #0b0f14;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        transition: opacity 0.5s ease;
+      }
+      #loading-screen.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .loader-logo {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #00a7c4, #08b3d5);
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        box-shadow: 0 0 40px rgba(0,167,196,0.4);
+        animation: pulse-logo 2s ease-in-out infinite;
+      }
+      @keyframes pulse-logo {
+        0%, 100% { box-shadow: 0 0 40px rgba(0,167,196,0.4); }
+        50% { box-shadow: 0 0 70px rgba(0,167,196,0.7); }
+      }
+      .loader-text {
+        color: rgba(255,255,255,0.85);
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
+      .loader-sub {
+        color: rgba(255,255,255,0.45);
+        font-size: 0.8rem;
+        margin-top: -16px;
+      }
+      .loader-bar {
+        width: 200px;
+        height: 3px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .loader-bar-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #00a7c4, #08b3d5);
+        border-radius: 10px;
+        animation: loading-bar 20s ease-out forwards;
+      }
+      @keyframes loading-bar {
+        0%   { width: 0%; }
+        30%  { width: 40%; }
+        60%  { width: 65%; }
+        85%  { width: 85%; }
+        100% { width: 92%; }
+      }
     </style>
   </head>
 
   <body>
+  <!-- Pantalla de carga mientras Render despierta -->
+  <div id="loading-screen">
+    <div class="loader-logo">🏷️</div>
+    <div class="loader-text">Conectando con el servidor...</div>
+    <div class="loader-sub">Esto puede tardar hasta 30 segundos la primera vez</div>
+    <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+  </div>
+
     <div class="containerAuth">
       <div class="inner">
       <div class="brand-wide">
@@ -333,5 +407,34 @@
 
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/js/login.js"></script>
+
+  <script>
+    // Ping al backend — cuando responde, oculta la pantalla de carga
+    (function() {
+      const screen = document.getElementById('loading-screen');
+      if (!screen) return;
+
+      const start = Date.now();
+      const MIN_SHOW = 800; // mostrar al menos 800ms para no hacer flash
+
+      function hideLoader() {
+        const elapsed = Date.now() - start;
+        const delay = Math.max(0, MIN_SHOW - elapsed);
+        setTimeout(() => {
+          screen.classList.add('hidden');
+          setTimeout(() => screen.remove(), 500);
+        }, delay);
+      }
+
+      // Ping al backend
+      fetch('/auth/login', { method: 'HEAD' })
+        .then(hideLoader)
+        .catch(hideLoader); // si falla igual ocultamos (el form manejará el error)
+
+      // Fallback: máximo 35 segundos de espera
+      setTimeout(hideLoader, 35000);
+    })();
+  </script>
+
   </body>
 </html>
