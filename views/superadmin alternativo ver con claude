@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Panel Superadmin | Tags Inteligentes</title>
+    <style>
+        :root {
+            --bg: #0b0f14;
+            --panel: rgba(255,255,255,0.06);
+            --border: rgba(255,255,255,0.12);
+            --text: rgba(255,255,255,0.92);
+            --muted: rgba(255,255,255,0.55);
+            --accent: #00a7c4;
+            --danger: #e05555;
+            --success: #2ecc7a;
+            --radius: 14px;
+        }
+        body { background: #0b0f14; color: var(--text); font-family: Inter, system-ui, sans-serif; margin: 0; }
+        .sa-wrapper { max-width: 1200px; margin: 0 auto; padding: 32px 20px 60px; }
+        .sa-header { display: flex; align-items: center; gap: 14px; margin-bottom: 36px; flex-wrap: wrap; }
+        .sa-badge { background: var(--accent); color: #000; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: .06em; text-transform: uppercase; }
+        .sa-header h1 { font-size: 22px; font-weight: 600; margin: 0; }
+
+        /* Grid principal */
+        .sa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+        @media(max-width: 800px) { .sa-grid { grid-template-columns: 1fr; } }
+
+        .sa-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; backdrop-filter: blur(2px); }
+        .sa-card h2 { font-size: 15px; font-weight: 600; margin: 0 0 22px; color: var(--accent); letter-spacing: .04em; text-transform: uppercase; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+
+        /* Formulario */
+        .sa-section-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+        .sa-field { margin-bottom: 14px; }
+        .sa-field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+        .sa-field input, .sa-field select {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            border-radius: 8px; padding: 9px 12px; color: var(--text); font-size: 14px;
+            transition: border-color .2s;
+        }
+        .sa-field input:focus, .sa-field select:focus { outline: none; border-color: var(--accent); }
+        .sa-field select option { background: #1a1f28; }
+        .sa-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; }
+        .next-tag-btn {
+            background: rgba(0,167,196,0.2);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            border-radius: 8px;
+            padding: 9px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .next-tag-btn:hover { background: rgba(0,167,196,0.4); }
+
+        /* Botón crear */
+        .sa-btn-create {
+            width: 100%; margin-top: 20px; padding: 12px; background: var(--accent);
+            color: #000; font-weight: 700; font-size: 15px; border: none; border-radius: 10px;
+            cursor: pointer; transition: opacity .2s;
+        }
+        .sa-btn-create:hover { opacity: .85; }
+        .sa-btn-create:disabled { opacity: .4; cursor: not-allowed; }
+
+        /* Filtros */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            background: rgba(255,255,255,0.03);
+            padding: 8px 12px;
+            border-radius: 40px;
+        }
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #000;
+        }
+        .filter-btn:hover:not(.active) {
+            background: rgba(255,255,255,0.1);
+            color: var(--text);
+        }
+
+        /* Tabla */
+        .sa-table-wrap { overflow-x: auto; border-radius: 12px; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; padding: 12px 12px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
+        td { padding: 11px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        .badge-role { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .badge-pet, .badge-admin { background: rgba(0,167,196,.2); color: var(--accent); }
+        .badge-object, .badge-admin1  { background: rgba(240,160,60,.2);  color: #f0a03c; }
+        .badge-person, .badge-admin2  { background: rgba(46,204,122,.2);  color: #2ecc7a; }
+        .badge-user    { background: rgba(255,255,255,.1);  color: var(--muted); }
+        .btn-del {
+            background: transparent; border: 1px solid var(--danger); color: var(--danger);
+            border-radius: 7px; padding: 4px 10px; font-size: 12px; cursor: pointer; transition: background .2s;
+            margin-right: 6px;
+        }
+        .btn-del:hover { background: rgba(224,85,85,.15); }
+        .btn-qr {
+            display: inline-block; margin-top: 4px; padding: 4px 10px; border: 1px solid var(--accent);
+            color: var(--accent); border-radius: 7px; font-size: 12px; text-decoration: none;
+        }
+        .no-profile { color: var(--muted); font-style: italic; }
+
+        /* Paginación */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 28px;
+            flex-wrap: wrap;
+        }
+        .pagination button {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .pagination button:hover:not(:disabled) {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #000;
+        }
+        .pagination button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .page-info {
+            font-size: 13px;
+            color: var(--muted);
+            background: rgba(255,255,255,0.05);
+            padding: 6px 14px;
+            border-radius: 30px;
+        }
+        .pagination .active-page {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* feedback */
+        #sa-feedback {
+            display: none; margin-top: 16px; padding: 12px 16px; border-radius: 10px;
+            font-size: 14px; font-weight: 500;
+        }
+        #sa-feedback.ok  { background: rgba(46,204,122,.15); border: 1px solid rgba(46,204,122,.35); color: var(--success); display: block; }
+        #sa-feedback.err { background: rgba(224,85,85,.15);  border: 1px solid rgba(224,85,85,.35);  color: var(--danger);  display: block; }
+        
+        .counter-badge {
+            background: rgba(0,167,196,0.2);
+            padding: 2px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="sa-wrapper">
+    <div class="sa-header">
+        <span class="sa-badge">Superadmin</span>
+        <h1>Panel de administración de tags</h1>
+    </div>
+
+    <div class="sa-grid">
+        <!-- FORMULARIO DE ALTA -->
+        <div class="sa-card">
+            <h2>Crear nuevo tag</h2>
+            <div class="sa-section-label">Tipo de perfil</div>
+            <div class="sa-field">
+                <label for="profileType">Tipo *</label>
+                <select id="profileType">
+                    <option value="">— Seleccioná un tipo —</option>
+                    <option value="pet">🐾 Mascota</option>
+                    <option value="object">📦 Objeto</option>
+                    <option value="person">👤 Persona</option>
+                </select>
+            </div>
+
+            <div class="sa-section-label">Acceso</div>
+            <div class="sa-row">
+                <div class="sa-field" style="flex:1">
+                    <label>Número de tag *</label>
+                    <input type="text" id="tag" placeholder="ej: 10042" />
+                </div>
+                <div>
+                    <button type="button" class="next-tag-btn" id="nextTagBtn">✨ Siguiente disponible</button>
+                </div>
+            </div>
+            <div class="sa-field">
+                <label>Contraseña *</label>
+                <input type="password" id="password" placeholder="Mínimo 6 caracteres" />
+            </div>
+            <input type="hidden" id="role" />
+            <p style="font-size:13px;color:var(--muted);margin:16px 0 0">
+                El usuario completa su nombre, foto y datos personales al ingresar.
+            </p>
+            <div id="sa-feedback"></div>
+            <button class="sa-btn-create" id="btnCreate">Crear tag</button>
+        </div>
+
+        <!-- TABLA CON FILTROS Y PAGINACIÓN -->
+        <div class="sa-card">
+            <h2>
+                Tags existentes 
+                <span class="counter-badge" id="totalCount">0</span>
+            </h2>
+            <!-- Filtros -->
+            <div class="filter-bar">
+                <button data-filter="all" class="filter-btn active">Todos</button>
+                <button data-filter="pet" class="filter-btn">🐾 Mascotas</button>
+                <button data-filter="object" class="filter-btn">📦 Objetos</button>
+                <button data-filter="person" class="filter-btn">👤 Personas</button>
+            </div>
+            <div class="sa-table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Tag</th><th>Nombre</th><th>Rol</th><th>Perfil</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr><td colspan="5" style="text-align:center;padding:40px">Cargando usuarios...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Paginación -->
+            <div class="pagination" id="paginationControls"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- MAPAS Y CONSTANTES ----------
+    const ROLE_MAP = { pet: 'admin', object: 'admin1', person: 'admin2' };
+    const PROFILE_LABEL = { pet: 'Mascota', admin: 'Mascota', admin1: 'Objeto', admin2: 'Persona', object: 'Objeto', person: 'Persona' };
+    const ITEMS_PER_PAGE = 8;  // cantidad por página, evita saturar
+
+    // Estado global
+    let allUsers = [];            // array original de usuarios (desde API)
+    let currentFilter = 'all';    // 'all', 'pet', 'object', 'person'
+    let currentPage = 1;
+    
+    // Elementos DOM
+    const tbody = document.getElementById('usersTableBody');
+    const paginationDiv = document.getElementById('paginationControls');
+    const totalCountSpan = document.getElementById('totalCount');
+    const profileTypeSelect = document.getElementById('profileType');
+    const tagInput = document.getElementById('tag');
+    const passwordInput = document.getElementById('password');
+    const roleHidden = document.getElementById('role');
+    const btnCreate = document.getElementById('btnCreate');
+    const nextTagBtn = document.getElementById('nextTagBtn');
+    const feedbackDiv = document.getElementById('sa-feedback');
+
+    // Helper: feedback
+    function showFeedback(msg, isError) {
+        feedbackDiv.textContent = msg;
+        feedbackDiv.className = isError ? 'err' : 'ok';
+        setTimeout(() => {
+            if (feedbackDiv.className) feedbackDiv.style.display = 'block';
+        }, 10);
+        setTimeout(() => {
+            feedbackDiv.style.display = 'none';
+        }, 4000);
+    }
+
+    // Obtener todos los usuarios desde el backend (endpoint esperado: /superadmin/users)
+    // Si tu backend no tiene ese endpoint, podemos leer los datos iniciales del servidor? 
+    // Pero asumiremos que existe GET /superadmin/users devuelve { users: [...] }
+    // Alternativa: también podemos parsear el HTML inicial, pero es más robusto API.
+    async function fetchAllUsers() {
+        try {
+            const res = await fetch('/superadmin/users');
+            if (!res.ok) throw new Error('Error al cargar usuarios');
+            const data = await res.json();
+            // Se espera que data.users sea array, cada user con: tag, first_name, last_name, role, profile, profileType, createdAt
+            allUsers = data.users || [];
+            // Ordenar por más nuevo a más viejo (createdAt descendente)
+            allUsers.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            applyFiltersAndRender();
+        } catch (err) {
+            console.error(err);
+            // Fallback: si no existe endpoint, intentar leer desde el DOM? 
+            // Para compatibilidad, mostramos mensaje pero también podemos usar datos mock (pero no)
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger)">Error cargando datos. Asegúrate de tener GET /superadmin/users</td></tr>';
+            showFeedback('Error al conectar con el servidor para obtener usuarios', true);
+        }
+    }
+
+    // Función para obtener el siguiente tag disponible (numérico, más bajo no usado)
+    function getNextAvailableTag() {
+        if (!allUsers.length) return "1";
+        const tags = allUsers.map(u => parseInt(u.tag, 10)).filter(n => !isNaN(n));
+        if (tags.length === 0) return "1";
+        const maxTag = Math.max(...tags);
+        // Buscar el primer número libre desde 1 hasta maxTag+1 (simple)
+        const usedSet = new Set(tags);
+        for (let i = 1; i <= maxTag + 1; i++) {
+            if (!usedSet.has(i)) return i.toString();
+        }
+        return (maxTag + 1).toString();
+    }
+
+    // Llenar input con siguiente disponible
+    function fillNextTag() {
+        const nextNum = getNextAvailableTag();
+        tagInput.value = nextNum;
+        showFeedback(`📌 Siguiente número sugerido: ${nextNum}`, false);
+    }
+
+    // Aplicar filtro + ordenamiento y actualizar página
+    function applyFiltersAndRender() {
+        // 1. Filtrar según tipo
+        let filtered = [...allUsers];
+        if (currentFilter !== 'all') {
+            filtered = filtered.filter(user => user.profileType === currentFilter);
+        }
+        // Ya están ordenados por createdAt descendente (más nuevo primero)
+        // 2. Renderizar con paginación
+        const totalItems = filtered.length;
+        totalCountSpan.innerText = totalItems;
+        const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+        // Ajustar página actual si excede
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+        
+        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+        const paginatedUsers = filtered.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+        
+        renderTableBody(paginatedUsers);
+        renderPaginationControls(totalPages, currentPage);
+    }
+
+    // Renderizar filas de la tabla
+    function renderTableBody(usersToShow) {
+        if (!tbody) return;
+        if (!usersToShow.length) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">No hay tags que coincidan con el filtro</td></tr>';
+            return;
+        }
+        let html = '';
+        for (const user of usersToShow) {
+            const tagNum = user.tag;
+            const firstName = user.first_name || '—';
+            const lastName = user.last_name || '';
+            const fullName = (firstName !== '—' ? firstName + ' ' + lastName : '—').trim() || '—';
+            const role = user.role || (user.profileType ? ROLE_MAP[user.profileType] : 'user');
+            const roleLabel = PROFILE_LABEL[role] || PROFILE_LABEL[user.profileType] || role;
+            let badgeClass = 'badge-role ';
+            if (role === 'admin' || user.profileType === 'pet') badgeClass += 'badge-pet';
+            else if (role === 'admin1' || user.profileType === 'object') badgeClass += 'badge-object';
+            else if (role === 'admin2' || user.profileType === 'person') badgeClass += 'badge-person';
+            else badgeClass += 'badge-user';
+            
+            const profileInfo = user.profile ? (user.profile.title || 'Perfil configurado') : null;
+            const profileCell = profileInfo ? `<span>${escapeHtml(profileInfo)}</span>` : '<span class="no-profile">Sin perfil</span>';
+            const qrLink = user.profile && user.profile._id ? `<a href="/qr/${user.profile._id}" class="btn-qr" download>QR</a>` : '';
+            
+            html += `
+                <tr id="row-${tagNum}">
+                    <td><strong>#${escapeHtml(tagNum)}</strong></td>
+                    <td style="color:var(--muted)">${escapeHtml(fullName)}</td>
+                    <td><span class="${badgeClass}">${escapeHtml(roleLabel)}</span></td>
+                    <td>${profileCell}</td>
+                    <td>
+                        <button class="btn-del" data-tag="${tagNum}">Eliminar</button>
+                        ${qrLink}
+                    </td>
+                </tr>
+            `;
+        }
+        tbody.innerHTML = html;
+        // Reasignar eventos de eliminar
+        document.querySelectorAll('.btn-del').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tag = btn.getAttribute('data-tag');
+                eliminarTag(tag, btn);
+            });
+        });
+    }
+
+    // pequeño helper para escapar HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Controles de paginación
+    function renderPaginationControls(totalPages, activePage) {
+        if (!paginationDiv) return;
+        if (totalPages <= 1) {
+            paginationDiv.innerHTML = '';
+            return;
+        }
+        let btns = '';
+        // Prev
+        btns += `<button class="page-prev" ${activePage === 1 ? 'disabled' : ''}>‹ Anterior</button>`;
+        // Numeración dinámica simplificada
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= activePage - 1 && i <= activePage + 1)) {
+                btns += `<button class="page-num ${i === activePage ? 'active-page' : ''}" data-page="${i}">${i}</button>`;
+            } else if (i === activePage - 2 || i === activePage + 2) {
+                btns += `<span style="color:var(--muted);padding:0 4px;">...</span>`;
+            }
+        }
+        // Next
+        btns += `<button class="page-next" ${activePage === totalPages ? 'disabled' : ''}>Siguiente ›</button>`;
+        paginationDiv.innerHTML = btns;
+        
+        // Eventos
+        document.querySelector('.page-prev')?.addEventListener('click', () => {
+            if (activePage > 1) {
+                currentPage--;
+                applyFiltersAndRender();
+            }
+        });
+        document.querySelector('.page-next')?.addEventListener('click', () => {
+            if (activePage < totalPages) {
+                currentPage++;
+                applyFiltersAndRender();
+            }
+        });
+        document.querySelectorAll('.page-num').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const page = parseInt(btn.getAttribute('data-page'), 10);
+                if (!isNaN(page)) {
+                    currentPage = page;
+                    applyFiltersAndRender();
+                }
+            });
+        });
+    }
+
+    // Crear tag (conectar al backend)
+    async function crearTag() {
+        const profileType = profileTypeSelect.value;
+        const tag = tagInput.value.trim();
+        const password = passwordInput.value;
+        const role = ROLE_MAP[profileType] || '';
+
+        if (!profileType) { showFeedback('Seleccioná un tipo de perfil.', true); return; }
+        if (!tag) { showFeedback('Ingresá el número de tag.', true); return; }
+        if (!password || password.length < 6) { showFeedback('La contraseña debe tener al menos 6 caracteres.', true); return; }
+
+        btnCreate.disabled = true;
+        btnCreate.textContent = 'Creando...';
+
+        try {
+            const res = await fetch('/superadmin/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tag, password, role, profileType }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                showFeedback(data.message || 'Error al crear el tag.', true);
+            } else {
+                showFeedback(`✓ Tag #${tag} creado exitosamente.`, false);
+                // refrescar lista completa desde el servidor
+                await fetchAllUsers();
+                // limpiar campos
+                tagInput.value = '';
+                passwordInput.value = '';
+                profileTypeSelect.value = '';
+                roleHidden.value = '';
+                // Reiniciar filtro y página (opcional mantener filtro)
+                currentPage = 1;
+                applyFiltersAndRender();
+            }
+        } catch (err) {
+            showFeedback('Error de conexión. Intentá de nuevo.', true);
+            console.error(err);
+        } finally {
+            btnCreate.disabled = false;
+            btnCreate.textContent = 'Crear tag';
+        }
+    }
+
+    // Eliminar tag
+    async function eliminarTag(tag, btnElement) {
+        if (!confirm(`¿Eliminar definitivamente el tag #${tag}? No se puede deshacer.`)) return;
+        if (btnElement) btnElement.disabled = true;
+        try {
+            const res = await fetch(`/superadmin/tag/${tag}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (res.ok) {
+                showFeedback(`Tag #${tag} eliminado.`, false);
+                await fetchAllUsers();   // recargar lista completa
+                currentPage = 1;
+                applyFiltersAndRender();
+            } else {
+                showFeedback(data.message || 'Error al eliminar.', true);
+                if (btnElement) btnElement.disabled = false;
+            }
+        } catch (err) {
+            showFeedback('Error de conexión.', true);
+            if (btnElement) btnElement.disabled = false;
+        }
+    }
+
+    // Sincronizar role cuando cambia tipo
+    function syncRoleOnType() {
+        const type = profileTypeSelect.value;
+        roleHidden.value = ROLE_MAP[type] || '';
+    }
+
+    // Eventos de filtros
+    function setupFilters() {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filterValue = btn.getAttribute('data-filter');
+                if (!filterValue) return;
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = filterValue;
+                currentPage = 1;
+                applyFiltersAndRender();
+            });
+        });
+    }
+
+    // Inicializar eventos y cargar datos
+    function init() {
+        setupFilters();
+        profileTypeSelect.addEventListener('change', syncRoleOnType);
+        btnCreate.addEventListener('click', crearTag);
+        nextTagBtn.addEventListener('click', fillNextTag);
+        // Cargar usuarios desde API
+        fetchAllUsers().then(() => {
+            // después de cargar, mostrar sugerencia inicial en el campo tag si está vacío
+            if (!tagInput.value) fillNextTag();
+        }).catch(() => {});
+        // Si no existe endpoint de usuarios, mostrar error controlado, pero asumimos que existe.
+    }
+
+    // polyfill / arranque
+    init();
+</script>
+</body>
+</html>
