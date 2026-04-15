@@ -40,6 +40,9 @@ const getSuperAdminUsers = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor" });
   }
 };
+
+// Renderiza el panel principal
+const getSuperAdminPanel = async (req, res) => {
   try {
     const allUsers = await userModel.find().lean();
     const allProducts = await productModel.find().lean();
@@ -65,7 +68,7 @@ const getSuperAdminUsers = async (req, res) => {
     console.error("Error en superAdmin panel:", error);
     res.status(500).send({ message: "Error interno del servidor" });
   }
-;
+};
 
 // Crea usuario + perfil en una sola operación (solo tag + password + tipo)
 const createTag = async (req, res) => {
