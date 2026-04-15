@@ -8,17 +8,21 @@ import { userModel } from "../models/users.model.js";
 
 const productDtoFromObject = (obj) => {
   const { _id, email, mostrarEmail, title, thumbnail, description,
-    fechadenacimiento, medicamentos, enfermedades, nombredelhumano, telefono, tag, userId } = obj;
+    fechadenacimiento, medicamentos, enfermedades, nombredelhumano, telefono, tag, userId,
+    modoPerdido, perdidoDesde, mensajePerdido } = obj;
   return new ProductDTO(_id, email, mostrarEmail, title, description,
-    fechadenacimiento, medicamentos, enfermedades, nombredelhumano, telefono, thumbnail, tag, userId);
+    fechadenacimiento, medicamentos, enfermedades, nombredelhumano, telefono, thumbnail, tag, userId,
+    modoPerdido, perdidoDesde, mensajePerdido);
 };
 
 const allProductsFromObject = (products) => {
   return products.map((product) => {
     const { _id, email, mostrarEmail, title, description, fechadenacimiento,
-      medicamentos, enfermedades, nombredelhumano, telefono, thumbnail, tag, userId } = product;
+      medicamentos, enfermedades, nombredelhumano, telefono, thumbnail, tag, userId,
+      modoPerdido, perdidoDesde, mensajePerdido } = product;
     return new ProductDTO(_id, email, mostrarEmail, title, description,
-      fechadenacimiento, medicamentos, enfermedades, nombredelhumano, telefono, thumbnail, tag, userId);
+      fechadenacimiento, medicamentos, enfermedades, nombredelhumano, telefono, thumbnail, tag, userId,
+      modoPerdido, perdidoDesde, mensajePerdido);
   });
 };
 

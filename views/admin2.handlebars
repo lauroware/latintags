@@ -135,6 +135,22 @@
                 <input id="newNombredelhumano-{{_id}}" class="form-control" type="text" name="nombredelhumano" value="{{nombredelhumano}}" placeholder="Nombre y teléfono de un familiar o amigo" />
               </div>
 
+
+              <!-- Modo perdido -->
+              <div class="field-group full-width" style="border:1px solid rgba(255,80,80,0.3);border-radius:16px;padding:1rem;background:rgba(255,40,40,0.06);">
+                <label style="color:#ff8080;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.5rem;display:flex;align-items:center;gap:6px;"><i class="fas fa-exclamation-triangle"></i> Modo perdido</label>
+                <input id="newMensajePerdido-{{_id}}" class="form-control" type="text" name="mensajePerdido" value="{{mensajePerdido}}" placeholder="Mensaje opcional (ej: Si lo encontraste llamame al...)" style="margin-bottom:0.75rem;" />
+                {{#if modoPerdido}}
+                  <button type="button" onclick="togglePerdido('{{_id}}', false)" style="background:rgba(255,80,80,0.2);border:1px solid rgba(255,80,80,0.5);color:#ff8080;border-radius:40px;padding:0.5rem 1.2rem;font-size:0.8rem;font-weight:700;cursor:pointer;width:100%;">
+                    <i class="fas fa-check-circle"></i> Desactivar modo perdido
+                  </button>
+                {{else}}
+                  <button type="button" onclick="togglePerdido('{{_id}}', true)" style="background:rgba(255,80,80,0.15);border:1px solid rgba(255,80,80,0.4);color:#ffaaaa;border-radius:40px;padding:0.5rem 1.2rem;font-size:0.8rem;font-weight:700;cursor:pointer;width:100%;">
+                    <i class="fas fa-exclamation-circle"></i> Activar modo perdido
+                  </button>
+                {{/if}}
+              </div>
+
             </div>
           </form>
         </div>

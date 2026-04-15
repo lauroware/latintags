@@ -5,6 +5,9 @@ const productSchema = new mongoose.Schema(
   {
     email:            { type: String, default: "" },
     mostrarEmail:     { type: Boolean, default: false },
+    modoPerdido:      { type: Boolean, default: false },
+    perdidoDesde:     { type: Date, default: null },
+    mensajePerdido:   { type: String, default: "" },
     title:            { type: String, default: "" },
     description:      { type: String, default: "" },
     fechadenacimiento:{ type: String, default: "" },

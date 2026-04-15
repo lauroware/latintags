@@ -212,13 +212,45 @@ const getAdminView2 = async (req, res) => {
   }
 };
 
+
+
+const toggleModoPerdido = async (req, res) => {
+  try {
+    const { pid } = req.params;
+    const { activar, mensajePerdido } = req.body;
+
+    const product = await productModel.findById(pid).lean();
+    if (!product) return res.status(404).json({ message: "Perfil no encontrado." });
+
+    const user = req.session?.user;
+    if (!user) return res.status(401).json({ message: "No autorizado." });
+
+    const isOwner = String(user.tag) === String(product.tag);
+    const isAdmin = ["admin", "admin1", "admin2", "superadmin"].includes(user.role);
+    if (!isOwner && !isAdmin) return res.status(401).json({ message: "No autorizado." });
+
+    const updates = {
+      modoPerdido:    activar,
+      perdidoDesde:   activar ? new Date() : null,
+      mensajePerdido: activar ? (mensajePerdido || "") : "",
+    };
+
+    const updated = await productModel.findByIdAndUpdate(pid, { $set: updates }, { new: true });
+    return res.status(200).json({ status: "success", modoPerdido: updated.modoPerdido });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error al cambiar modo perdido." });
+  }
+};
+
 export {
   getProducts,
   getProductById,
   updateProduct,
-  updateProductEmail, // 👈 nuevo
+  updateProductEmail,
   getProductsFromPremiumUsers,
   getAdminView,
   getAdminView1,
   getAdminView2,
+  toggleModoPerdido,
 };

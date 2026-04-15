@@ -2,7 +2,8 @@ class ProductDTO {
   constructor(
     _id, email, mostrarEmail, title, description,
     fechadenacimiento, medicamentos, enfermedades,
-    nombredelhumano, telefono, thumbnail, tag, userId
+    nombredelhumano, telefono, thumbnail, tag, userId,
+    modoPerdido, perdidoDesde, mensajePerdido
   ) {
     this._id = _id;
     this.email = email;
@@ -17,6 +18,9 @@ class ProductDTO {
     this.thumbnail = thumbnail;
     this.tag = tag;
     this.userId = userId;
+    this.modoPerdido = modoPerdido;
+    this.perdidoDesde = perdidoDesde;
+    this.mensajePerdido = mensajePerdido;
   }
 }
 
