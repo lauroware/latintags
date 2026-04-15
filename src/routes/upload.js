@@ -16,5 +16,6 @@ uploadRouter.post("/", (req, res, next) => {
     next();
   });
 }, uploadImage);
+//viendo
 
 export default uploadRouter;
