@@ -294,6 +294,7 @@ const adminView = async (req, res) => {
     allUsers,
     allProducts: filteredProducts,
     style: "index.css",
+    layout: false,
   });
 };
 
@@ -318,6 +319,7 @@ const adminView1 = async (req, res) => {
     allUsers,
     allProducts: filteredProducts,
     style: "index.css",
+    layout: false,
   });
 };
 
@@ -342,6 +344,7 @@ const adminView2 = async (req, res) => {
     allUsers,
     allProducts: filteredProducts,
     style: "index.css",
+    layout: false,
   });
 };
 
