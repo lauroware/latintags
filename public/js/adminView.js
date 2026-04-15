@@ -1,38 +1,38 @@
-const BACKEND = "https://latintags.onrender.com";
-
 const updateProduct = async (pid) => {
-  const data = {};
   const get = (id) => { const el = document.getElementById(id); return el ? el.value : undefined; };
   const getCheck = (id) => { const el = document.getElementById(id); return el ? el.checked : false; };
 
-  data.pid = pid;
-  data.updates = {
-    email:             get(`newEmail-${pid}`),
-    mostrarEmail:      getCheck(`newMostrarEmail-${pid}`),
-    title:             get(`newTitle-${pid}`),
-    thumbnail:         get(`newThumbnail-${pid}`),
-    description:       get(`newDescription-${pid}`),
-    fechadenacimiento: get(`newFechadenacimiento-${pid}`),
-    medicamentos:      get(`newMedicamentos-${pid}`),
-    enfermedades:      get(`newEnfermedades-${pid}`),
-    nombredelhumano:   get(`newNombredelhumano-${pid}`),
-    telefono:          get(`newTelefono-${pid}`),
+  const data = {
+    pid,
+    updates: {
+      email:             get(`newEmail-${pid}`),
+      mostrarEmail:      getCheck(`newMostrarEmail-${pid}`),
+      title:             get(`newTitle-${pid}`),
+      thumbnail:         get(`newThumbnail-${pid}`),
+      description:       get(`newDescription-${pid}`),
+      fechadenacimiento: get(`newFechadenacimiento-${pid}`),
+      medicamentos:      get(`newMedicamentos-${pid}`),
+      enfermedades:      get(`newEnfermedades-${pid}`),
+      nombredelhumano:   get(`newNombredelhumano-${pid}`),
+      telefono:          get(`newTelefono-${pid}`),
+    }
   };
 
   Object.keys(data.updates).forEach(k => data.updates[k] === undefined && delete data.updates[k]);
 
   try {
-    const res = await fetch(
-      `${BACKEND}/api/products/${pid}`,
-      { method: "put", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify(data) }
-    );
+    const res = await fetch(`/api/products/${pid}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
     if (res.ok) {
       window.location.reload();
     } else {
       const err = await res.json();
       Swal.fire("Error", err.message || "No se pudo guardar.", "error");
     }
-  } catch (error) {
+  } catch {
     Swal.fire("Error", "Error de conexión.", "error");
   }
 };
@@ -48,7 +48,7 @@ const uploadFoto = async (input, pid) => {
   formData.append("image", file);
 
   try {
-    const res = await fetch(`${BACKEND}/upload`, { method: "POST", body: formData, credentials: "include" });
+    const res = await fetch("/upload", { method: "POST", body: formData });
     const data = await res.json();
 
     if (res.ok) {
